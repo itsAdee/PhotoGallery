@@ -1,4 +1,7 @@
+EventBus/node_modules
 StorageMgmtServ/node_modules
 UsageMntrServ/node_modules
 UserAccMgmtServ/node_modules
-ViewGeneratorServ/node_modules
+view_generator_serv/node_modules
+
+StorageMgmtServ/.env
