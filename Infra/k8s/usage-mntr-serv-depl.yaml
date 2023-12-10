@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usage-mntr-serv-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usage-mntr-serv
+  template:
+    metadata:
+      labels:
+        app: usage-mntr-serv
+    spec:
+      containers:
+        - name: usage-mntr-serv
+          image: adeelqureshi/usage-mntr-serv
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usage-mntr-serv-srv
+spec:
+  selector:
+    app: usage-mntr-serv
+  ports:
+    - name: usage-mntr-serv
+      protocol: TCP
+      port: 4002
+      targetPort: 4002
