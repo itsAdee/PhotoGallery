@@ -13,8 +13,6 @@ const FormData = require('form-data');
 const fs = require('fs');
 const { Console } = require("console");
 
-const url = process.env.MONGO_URI;
-
 // UserStorage Model
 const userStorageSchema = new db.Schema({
   userID: String,
@@ -36,29 +34,8 @@ const imageSchema = new db.Schema({
 // Create a Mongoose model for the Images table
 const Image = db.model('Image', imageSchema);
 
-// Create a storage object with a given configuration
-// const storage = new GridFsStorage({
-//   url,
-//   file: (req, file) => {
-//     console.log(file)
-//     //If it is an image, save to photos bucket
-//     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-//       return {
-//         bucketName: "photos",
-
-//         filename: `${Date.now()}_${file.originalname}`,
-//       };
-//     } else {
-//       //Otherwise save to default bucket
-//       return `${Date.now()}_${file.originalname}`;
-//     }
-//   },
-// });
-
-// Set multer storage engine to the newly created object
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage });
-const upload = multer({limits: {fileSize: 1064960 },dest:'/uploads/'}).single('file');
+// Create storage engine
+const upload = multer({ limits: { fileSize: 1000000 }, dest: '/uploads/' }).single('file');
 
 const app = express();
 app.use(bodyParser.json());
@@ -69,12 +46,9 @@ app.use(fileUpload());
 // Endpoint to handle user uploads
 app.post("/upload", async (req, res) => {
   console.log("Uploading in Progress...")
-  const file = req.files.file 
+  const file = req.files.file
 
-  const { userID, photoSize } = req.body
-
- 
-
+  const { userID } = req.body
 
   try {
     const userStorage = await UserStorage.findOne({ userID });
@@ -86,11 +60,7 @@ app.post("/upload", async (req, res) => {
 
     const { usedStorage, totalStorage } = userStorage;
 
-    if (parseInt(usedStorage) + parseInt(photoSize) > parseInt(totalStorage)) {
-      console.log(usedStorage );
-      console.log(photoSize);
-      console.log(totalStorage);
-      console.log(usedStorage + photoSize> totalStorage);
+    if (parseInt(usedStorage) + parseInt(file.size) > parseInt(totalStorage)) {
       console.log("Storage limit exceeded.");
       return res.status(400).json({ message: "Storage limit exceeded." });
     }
@@ -101,44 +71,38 @@ app.post("/upload", async (req, res) => {
       if (err) {
         console.log("Error uploading file in the upload endpoint.")
         console.log(err);
-          res.status(500).json({ error: 'message' });
+        res.status(500).json({ error: 'Error uploading file in the upload endpoint.' });
       }
-      
-      if (file == null) {
-          // If Submit was accidentally clicked with no file selected...
-          res.send('boo');
-      } else {
-          // // read the img file from tmp in-memory location
-          // var newImg = fs.readFileSync(file.data);
-          // encode the file as a base64 string.
-          var encImg = file.data.toString('base64');
-          // define your new document
-          var newItem = {
-              userID: userID,
-              imageName: file.name,
-              size: file.size,
-              contentType: file.mimetype,
-              img: Buffer.from(encImg, 'base64')
-          };
-      
-          Image.create(newItem)
-    .then(function () {
-      console.log('image inserted!');
-     
-    })
-    .catch(function (error) {
-      console.error('Error inserting image:', error);
-      res.status(500).json({ error: 'Failed to insert image' });
-    });
-          
-          
-      }
-  });
 
-  
+      if (file == null) {
+        res.send('File not found');
+      } else {
+        var encImg = file.data.toString('base64');
+
+        var newItem = {
+          userID: userID,
+          imageName: file.name,
+          imageSize: file.size,
+          contentType: file.mimetype,
+          img: Buffer.from(encImg, 'base64')
+        };
+
+        Image.create(newItem)
+          .then(function () {
+            console.log('Image inserted!');
+
+          })
+          .catch(function (error) {
+            console.error('Error inserting image:', error);
+            res.status(500).json({ error: 'Failed to insert image' });
+          });
+
+
+      }
+    });
 
     // Update used storage for the user
-    userStorage.usedStorage += photoSize;
+    userStorage.usedStorage += Number(file.size);
     await userStorage.save();
 
     res.status(200).json({ message: "Upload successful." });
@@ -148,9 +112,34 @@ app.post("/upload", async (req, res) => {
   }
 });
 
+app.get("/images", async (req, res) => {
+
+  try {
+    const images = await Image.find();
+
+    const modifiedImages = images.map((image) => {
+      const base64Data = image.img.toString('base64');
+      const imageUri = `data:${image.contentType};base64,${base64Data}`;
+      
+      return {
+        _id: image._id,
+        userID: image.userID,
+        imageName: image.imageName,
+        imageSize: image.imageSize,
+        contentType: image.contentType,
+        imageUri: imageUri,
+      };
+    });
+
+    res.status(200).json(modifiedImages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+});
+
 
 // Endpoint to handle storage usage alert
-// This can be triggered by an event or scheduled task
 app.post("/usageAlert", async (req, res) => {
   const { userID } = req.body;
 
@@ -165,8 +154,6 @@ app.post("/usageAlert", async (req, res) => {
 
     if ((usedStorage / totalStorage) * 100 >= 80) {
       // Generate storage alert for the user (via EventBus or other means)
-      // This might involve publishing an event or notifying another service
-      // For example:
       axios.post("http://localhost:4000/events", {
         type: "StorageAlert",
         data: {
@@ -189,8 +176,7 @@ app.post("/events", async (req, res) => {
 
   console.log("StorageMgmtServ: Received Event:", type);
 
-  if (type === "ImageUploaded") {
-    const formData = new FormData();
+  const formData = new FormData();
     Object.keys(req.body).forEach(key => {
       formData.append(key, req.body[key]);
     });
@@ -198,6 +184,8 @@ app.post("/events", async (req, res) => {
       filename: req.files.file.name,
       contentType: req.files.file.mimetype,
     });
+
+  if (type === "ImageUploaded") {
     await axios.post("http://localhost:4001/upload",
       formData,
       {
