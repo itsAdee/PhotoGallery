@@ -3,22 +3,43 @@ const bodyParser = require("body-parser");
 const { randomBytes } = require("crypto");
 const cors = require("cors");
 const axios = require("axios");
+const fileUpload = require('express-fileupload');
+const FormData = require('form-data');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+app.use(fileUpload());
 
 const events = [];
 
 app.post("/events", (req, res) => {
   const event = req.body;
-
   events.push(event);
 
-  axios.post("http://localhost:4001/events", event).catch((err) => {
+  try {
+    const formData = new FormData();
+    Object.keys(req.body).forEach(key => {
+      formData.append(key, req.body[key]);
+    });
+    formData.append('file', req.files.file.data, {
+      filename: req.files.file.name,
+      contentType: req.files.file.mimetype,
+    });
+
+    axios.post("http://localhost:4001/events",
+      formData,
+      {
+        headers: formData.getHeaders()
+      }).catch((err) => {
+        console.log(err.message);
+      });
+
+    res.send({ status: "OK" });
+  } catch (err) {
     console.log(err.message);
-  });
-  res.send({ status: "OK" });
+  }
+
 });
 
 app.get("/events", (req, res) => {

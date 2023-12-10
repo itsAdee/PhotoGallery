@@ -1,16 +1,18 @@
 require("dotenv").config();
 
 const multer = require("multer");
-const { GridFsStorage } = require("multer-gridfs-storage");
+const { GridFsStorage } = require('multer-gridfs-storage');
 const express = require("express");
 const bodyParser = require("body-parser");
 const { randomBytes } = require("crypto");
 const cors = require("cors");
 const axios = require("axios");
 const db = require("mongoose");
-const GridFSBucket = require("mongodb").GridFSBucket;
+const fileUpload = require("express-fileupload");
+const FormData = require('form-data');
+const fs = require('fs');
 
-const uri = process.env.MONGO_URI;
+const url = process.env.MONGO_URI;
 
 // UserStorage Model
 const userStorageSchema = new db.Schema({
@@ -26,54 +28,49 @@ const imageSchema = new db.Schema({
   userID: String,
   imageName: String,
   imageSize: Number,
+  contentType: String,
+  img: Buffer,
 });
 
 // Create a Mongoose model for the Images table
 const Image = db.model('Image', imageSchema);
 
 // Create a storage object with a given configuration
-const storage = new GridFsStorage({
-  url: uri,
-  file: (req, file) => {
-    //If it is an image, save to photos bucket
-    console.log("Grid", file, req.body)
-    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-      return {
-        bucketName: "photos",
+// const storage = new GridFsStorage({
+//   url,
+//   file: (req, file) => {
+//     console.log(file)
+//     //If it is an image, save to photos bucket
+//     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+//       return {
+//         bucketName: "photos",
 
-        filename: `${Date.now()}_${file.originalname}`,
-      };
-    } else {
-      //Otherwise save to default bucket
-      return `${Date.now()}_${file.originalname}`;
-    }
-  },
-});
+//         filename: `${Date.now()}_${file.originalname}`,
+//       };
+//     } else {
+//       //Otherwise save to default bucket
+//       return `${Date.now()}_${file.originalname}`;
+//     }
+//   },
+// });
 
 // Set multer storage engine to the newly created object
-const upload = multer({ storage });
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage });
+const upload = multer({limits: {fileSize: 1064960 },dest:'/uploads/'}).single('file');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-
-const handleEvent = async (type, data) => {
-  if (type === "ImageUploaded") {
-    await axios.post("http://localhost:4001/upload", data).catch((err) => {
-      console.log(err.message);
-    });
-    if (type === "NewUserCreated") {
-      res.send({ status: "OK" });
-    }
-  }
-}
+app.use(fileUpload());
 
 
 // Endpoint to handle user uploads
-app.post("/upload", upload.single("avatar"), async (req, res) => {
-  console.log("Uploading in Progress...", req.file)
+app.post("/upload", async (req, res) => {
+  console.log("Uploading in Progress...")
+  const file = req.files.file 
+
   const { userID, photoSize } = req.body
-  console.log(userID, photoSize)
 
   try {
     const userStorage = await UserStorage.findOne({ userID });
@@ -87,6 +84,39 @@ app.post("/upload", upload.single("avatar"), async (req, res) => {
     if (usedStorage + photoSize > totalStorage) {
       return res.status(400).json({ message: "Storage limit exceeded." });
     }
+
+    upload(req, res, function (err) {
+      if (err) {
+          res.status(500).json({ error: 'message' });
+      }
+      
+      if (file == null) {
+          // If Submit was accidentally clicked with no file selected...
+          res.send('boo');
+      } else {
+          // read the img file from tmp in-memory location
+          var newImg = fs.readFileSync(file.data);
+          // encode the file as a base64 string.
+          var encImg = newImg.toString('base64');
+          // define your new document
+          var newItem = {
+              userID: userID,
+              imageName: file.name,
+              size: file.size,
+              contentType: file.mimetype,
+              img: Buffer(encImg, 'base64')
+          };
+      
+          Image.insert(newItem)
+              .then(function() {
+                  console.log('image inserted!');
+              });
+          
+          res.send('yo');
+      }
+  });
+
+  
 
     // Update used storage for the user
     userStorage.usedStorage += photoSize;
@@ -135,12 +165,31 @@ app.post("/usageAlert", async (req, res) => {
 });
 
 
-app.post("/events", (req, res) => {
-  const { type, data } = req.body;
+app.post("/events", async (req, res) => {
+  const { type } = req.body;
 
   console.log("StorageMgmtServ: Received Event:", type);
 
-  handleEvent(type, data);
+  if (type === "ImageUploaded") {
+    const formData = new FormData();
+    Object.keys(req.body).forEach(key => {
+      formData.append(key, req.body[key]);
+    });
+    formData.append('file', req.files.file.data, {
+      filename: req.files.file.name,
+      contentType: req.files.file.mimetype,
+    });
+    await axios.post("http://localhost:4001/upload",
+      formData,
+      {
+        headers: formData.getHeaders()
+      }).catch((err) => {
+        console.log(err.message);
+      });
+  }
+  if (type === "NewUserCreated") {
+    res.send({ status: "OK" });
+  }
 
   res.send({});
 });
