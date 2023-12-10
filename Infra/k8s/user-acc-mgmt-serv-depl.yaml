@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-acc-mgmt-serv-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-acc-mgmt-serv
+  template:
+    metadata:
+      labels:
+        app: user-acc-mgmt-serv
+    spec:
+      containers:
+        - name: user-acc-mgmt-serv
+          image: adeelqureshi/user-acc-mgmt-serv
+---
+apiVersion: v1
+kind: Service
+metadata: name:user-acc-mgmt-serv-srv
+spec:
+  selector:
+    app: user-acc-mgmt-serv
+  ports:
+    - name: user-acc-mgmt-serv
+      protocol: TCP
+      port: 4001
+      targetPort: 4001

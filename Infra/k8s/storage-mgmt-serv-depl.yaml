@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage-mgmt-serv-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage-mgmt-serv
+  template:
+    metadata:
+      labels:
+        app: storage-mgmt-serv
+    spec:
+      containers:
+        - name: storage-mgmt-serv
+          image: adeelqureshi/storage-mgmt-serv
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: storage-mgmt-serv-srv
+spec:
+  selector:
+    app: storage-mgmt-serv
+  ports:
+    - name: storage-mgmt-serv
+      protocol: TCP
+      port: 4002
+      targetPort: 4002

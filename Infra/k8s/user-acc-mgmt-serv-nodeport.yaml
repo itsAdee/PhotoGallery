@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata: name:user-acc-mgmt-serv-nodeport-srv
+spec:
+  type: NodePort
+  selector:
+    app: user-acc-mgmt-serv
+  ports:
+    - name: posts
+      protocol: TCP
+      port: 4003
+      targetPort: 4003
