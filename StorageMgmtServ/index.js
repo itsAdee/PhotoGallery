@@ -11,6 +11,7 @@ const db = require("mongoose");
 const fileUpload = require("express-fileupload");
 const FormData = require('form-data');
 const fs = require('fs');
+const { Console } = require("console");
 
 const url = process.env.MONGO_URI;
 
@@ -72,21 +73,34 @@ app.post("/upload", async (req, res) => {
 
   const { userID, photoSize } = req.body
 
+ 
+
+
   try {
     const userStorage = await UserStorage.findOne({ userID });
 
     if (!userStorage) {
+      console.log("User not found.");
       return res.status(404).json({ message: "User not found." });
     }
 
     const { usedStorage, totalStorage } = userStorage;
 
-    if (usedStorage + photoSize > totalStorage) {
+    if (parseInt(usedStorage) + parseInt(photoSize) > parseInt(totalStorage)) {
+      console.log(usedStorage );
+      console.log(photoSize);
+      console.log(totalStorage);
+      console.log(usedStorage + photoSize> totalStorage);
+      console.log("Storage limit exceeded.");
       return res.status(400).json({ message: "Storage limit exceeded." });
     }
 
+    console.log("Storage limit not exceeded.")
+
     upload(req, res, function (err) {
       if (err) {
+        console.log("Error uploading file in the upload endpoint.")
+        console.log(err);
           res.status(500).json({ error: 'message' });
       }
       
@@ -94,25 +108,30 @@ app.post("/upload", async (req, res) => {
           // If Submit was accidentally clicked with no file selected...
           res.send('boo');
       } else {
-          // read the img file from tmp in-memory location
-          var newImg = fs.readFileSync(file.data);
+          // // read the img file from tmp in-memory location
+          // var newImg = fs.readFileSync(file.data);
           // encode the file as a base64 string.
-          var encImg = newImg.toString('base64');
+          var encImg = file.data.toString('base64');
           // define your new document
           var newItem = {
               userID: userID,
               imageName: file.name,
               size: file.size,
               contentType: file.mimetype,
-              img: Buffer(encImg, 'base64')
+              img: Buffer.from(encImg, 'base64')
           };
       
-          Image.insert(newItem)
-              .then(function() {
-                  console.log('image inserted!');
-              });
+          Image.create(newItem)
+    .then(function () {
+      console.log('image inserted!');
+     
+    })
+    .catch(function (error) {
+      console.error('Error inserting image:', error);
+      res.status(500).json({ error: 'Failed to insert image' });
+    });
           
-          res.send('yo');
+          
       }
   });
 
