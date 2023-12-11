@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import LoginForm from './components/loginForm';
+import RegisterForm from './components/registerForm';
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -52,6 +54,9 @@ function App() {
 
   return (
     <div className="App">
+      <LoginForm />
+      <RegisterForm />  
+      <h1>Upload an image</h1>
       <form onSubmit={handleUpload}>
         <input type="file" onChange={handleFileChange} />
         <input type='submit' />

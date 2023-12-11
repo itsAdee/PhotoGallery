@@ -5,3 +5,4 @@ UserAccMgmtServ/node_modules
 view_generator_serv/node_modules
 
 StorageMgmtServ/.env
+UserAccMgmtServ/.env
