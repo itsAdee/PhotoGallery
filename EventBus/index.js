@@ -1,6 +1,5 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { randomBytes } = require("crypto");
 const cors = require("cors");
 const axios = require("axios");
 const fileUpload = require('express-fileupload');
@@ -22,10 +21,13 @@ app.post("/events", (req, res) => {
     Object.keys(req.body).forEach(key => {
       formData.append(key, req.body[key]);
     });
-    formData.append('file', req.files.file.data, {
-      filename: req.files.file.name,
-      contentType: req.files.file.mimetype,
-    });
+    if (req.files.file) {
+      formData.append('file', req.files.file.data, {
+        filename: req.files.file.name,
+        contentType: req.files.file.mimetype,
+      });
+    }
+
 
     axios.post("http://localhost:4001/events",
       formData,
