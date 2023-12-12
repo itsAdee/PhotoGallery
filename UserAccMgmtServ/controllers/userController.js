@@ -20,7 +20,7 @@ router.post('/login', upload.none(), async (req, res) => {
   const user = await User.findOne({ username });
   if (user && await bcrypt.compare(password, user.password)) {
     console.log(`User ${username} logged in.`);
-    res.status(200).send();
+    res.status(200).json(user);
   } else {
     console.log(`User ${username} failed to log in.`);
     res.status(403).send();

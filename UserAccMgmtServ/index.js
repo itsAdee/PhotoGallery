@@ -8,10 +8,7 @@ const userRoutes = require('./controllers/userController');
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors({
-  origin: 'http://localhost:3000', // replace with the origin of your client
-  credentials: true
-}));
+app.use(cors());
 
 db.connect(process.env.MONGO_URI)
   .then((result) => {
