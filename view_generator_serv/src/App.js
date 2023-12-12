@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Login from './components/Login';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route
+} from "react-router-dom";
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -51,18 +57,13 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <form onSubmit={handleUpload}>
-        <input type="file" onChange={handleFileChange} />
-        <input type='submit' />
-      </form>
-
-      <div>
-        {images.map((image) => (
-          <img key={image._id} src={image.imageUri} alt={image.imageName} />
-        ))}
-      </div>
-    </div>
+    <>
+    <Router>
+      <Routes>
+        <Route exact path = "/" element={<Login/>}/>
+      </Routes>
+    </Router>
+    </>
   );
 }
 
