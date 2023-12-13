@@ -11,7 +11,7 @@ const CreateUser = async (req, res) => {
   const newUser = new User({ username, password: hashedPassword, email });
   await newUser.save();
   console.log(`User ${username} created.`);
-  res.status(201).send();
+  res.status(201).json(newUser);
 };
 
 const LoginUser = async (req, res) => {

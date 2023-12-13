@@ -1,10 +1,17 @@
 // LoginForm.js
-import React, { useState } from 'react';
+import React, { useState,useContext,useEffect } from 'react';
 import axios from 'axios';
+import UserContext from './usercontext';
 
 function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { username: contextUsername, id: contextId ,setUserData } = useContext(UserContext);
+
+  useEffect(() => {
+    console.log(`Context Username: ${contextUsername}, Context ID: ${contextId}`);
+  }, [contextUsername, contextId]);
+
 
   const login = (event) => {
     event.preventDefault();
@@ -15,7 +22,7 @@ function LoginForm() {
     axios.post('http://localhost:4003/login', formData)
       .then((response) => {
         console.log(response.data);
-        // You can add any actions you want to perform after successful login here
+        setUserData({ username: response.data.username, id: response.data._id })
       })
       .catch((error) => {
         console.error(error);

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import LoginForm from './components/loginForm';
 import RegisterForm from './components/registerForm';
+import UserContext from './components/usercontext';
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [images, setImages] = useState([]);
+  const [userData, setUserData] = useState({ username: null, id: null });
 
   useEffect(() => {
     // Fetch images from the server
@@ -20,6 +22,8 @@ function App() {
     }
     fetchImages();
   }, []);
+
+  
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -53,21 +57,22 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <LoginForm />
-      <RegisterForm />  
-      <h1>Upload an image</h1>
-      <form onSubmit={handleUpload}>
-        <input type="file" onChange={handleFileChange} />
-        <input type='submit' />
-      </form>
-
-      <div>
-        {images.map((image) => (
-          <img key={image._id} src={image.imageUri} alt={image.imageName} />
-        ))}
+    <UserContext.Provider value={{ ...userData, setUserData }}>
+      <div className="App">
+        <LoginForm />
+        <RegisterForm />
+        <h1>Upload an image</h1>
+        <form onSubmit={handleUpload}>
+          <input type="file" onChange={handleFileChange} />
+          <input type='submit' />
+        </form>
+        <div>
+          {images.map((image) => (
+            <img key={image._id} src={image.imageUri} alt={image.imageName} />
+          ))}
+        </div>
       </div>
-    </div>
+    </UserContext.Provider>
   );
 }
 

@@ -1,11 +1,17 @@
 // RegisterForm.js
-import React, { useState } from 'react';
+import React, { useState,useContext,useEffect } from 'react';
 import axios from 'axios';
+import UserContext from './usercontext';
 
 function RegisterForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const { username: contextUsername, id: contextId ,setUserData } = useContext(UserContext);
+
+  useEffect(() => {
+    console.log(`Context Username: ${contextUsername}, Context ID: ${contextId}`);
+  }, [contextUsername, contextId]);
 
   const register = (event) => {
     event.preventDefault();
@@ -13,11 +19,14 @@ function RegisterForm() {
     formData.append('username', username);
     formData.append('password', password);
     formData.append('email', email);
+
+    
   
     axios.post('http://localhost:4003/register', formData)
       .then((response) => {
         console.log(response.data);
-        // You can add any actions you want to perform after successful registration here
+        setUserData({ username: response.data.username, id: response.data._id })
+       
       })
       .catch((error) => {
         console.error(error);
