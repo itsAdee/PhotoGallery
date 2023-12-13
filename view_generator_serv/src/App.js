@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import Login from './components/Login';
+import Dashboard from './components/Dashboard';
 import {
   BrowserRouter as Router,
   Routes,
@@ -14,6 +14,7 @@ function App() {
     <Router>
       <Routes>
         <Route exact path = "/" element={<Login/>}/>
+        <Route exact path = "/dashboard" element={<Dashboard/>}/>
       </Routes>
     </Router>
     </>
