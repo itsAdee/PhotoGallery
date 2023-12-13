@@ -1,42 +1,28 @@
-// LoginForm.js
-import React, { useState,useContext,useEffect } from 'react';
-import axios from 'axios';
-import UserContext from './usercontext';
+import { useState } from "react";
+import { useLogin } from "../hooks/useLogin";
 
-function LoginForm() {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { username: contextUsername, id: contextId ,setUserData } = useContext(UserContext);
+  const { login, error, isLoading } = useLogin();
 
-  useEffect(() => {
-    console.log(`Context Username: ${contextUsername}, Context ID: ${contextId}`);
-  }, [contextUsername, contextId]);
-
-
-  const login = (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
-  
-    axios.post('http://localhost:4003/login', formData)
-      .then((response) => {
-        console.log(response.data);
-        setUserData({ username: response.data.username, id: response.data._id })
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        await login(username, password);
+    }
 
   return (
-    <div>
-      <h1>Login</h1>
-      <input placeholder="username" onChange={(e) => setUsername(e.target.value)} />
-      <input placeholder="password" type="password" onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={login}>Submit</button>
-    </div>
+    <form className="login" onSubmit={handleSubmit}>
+      <h3>Log In</h3>
+      <label>Username</label>
+      <input type="text" onChange={(e) => setUsername(e.target.value)} value={username}/>
+      <label>Password</label>
+      <input type="password" onChange={(e) => setPassword(e.target.value)} value={password}/>
+      <button disabled={isLoading}>Log In</button>
+      {error && <div className="error">{error}</div>}
+    </form>
   );
-}
+};
 
-export default LoginForm;
+export default Login;

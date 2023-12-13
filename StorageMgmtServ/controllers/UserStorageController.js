@@ -1,5 +1,30 @@
 const UserStorage = require('../models/UserStorage');
 
+const createUser = async (req, res) => {
+    const { userID } = req.body;
+
+    try {
+        const userStorage = await UserStorage.findOne({ userID });
+
+        if (userStorage) {
+            return res.status(400).json({ message: "User already exists." });
+        }
+
+        const newUserStorage = new UserStorage({
+            userID,
+            totalStorage: 1000000,
+            usedStorage: 0
+        });
+
+        await newUserStorage.save();
+
+        res.status(201).json({ message: "User storage created." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+}
+
 const getUserStorageById = async (req, res) => {
     const { userID } = req;
 
@@ -32,7 +57,7 @@ const updateUserStorage = async (req, res, next) => {
             return res.status(404).json({ message: "User not found." });
         }
 
-        if (file && parseInt(file.size)+ parseInt(userStorage.usedStorage) > parseInt(userStorage.totalStorage)) {
+        if (file && parseInt(file.size) + parseInt(userStorage.usedStorage) > parseInt(userStorage.totalStorage)) {
             return res.status(400).json({ message: "Not enough storage." });
         }
 
@@ -48,5 +73,5 @@ const updateUserStorage = async (req, res, next) => {
 }
 
 module.exports = {
-    getUserStorageById, updateUserStorage
+    getUserStorageById, updateUserStorage, createUser
 };

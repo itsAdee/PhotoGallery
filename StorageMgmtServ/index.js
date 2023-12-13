@@ -7,7 +7,7 @@ const axios = require("axios");
 const db = require("mongoose");
 const fileUpload = require("express-fileupload");
 const FormData = require('form-data');
-const { updateUserStorage } = require("./controllers/UserStorageController");
+const { updateUserStorage, createUser } = require("./controllers/UserStorageController");
 const { uploadImage, getImages } = require("./controllers/ImageController");
 
 
@@ -18,6 +18,7 @@ app.use(fileUpload());
 
 
 app.post("/upload", updateUserStorage, uploadImage);
+app.post("createUser", createUser);
 app.get("/images", getImages)
 
 
@@ -59,13 +60,13 @@ app.post("/events", async (req, res) => {
   console.log("StorageMgmtServ: Received Event:", type);
 
   const formData = new FormData();
-    Object.keys(req.body).forEach(key => {
-      formData.append(key, req.body[key]);
-    });
-    formData.append('file', req.files.file.data, {
-      filename: req.files.file.name,
-      contentType: req.files.file.mimetype,
-    });
+  Object.keys(req.body).forEach(key => {
+    formData.append(key, req.body[key]);
+  });
+  formData.append('file', req.files.file.data, {
+    filename: req.files.file.name,
+    contentType: req.files.file.mimetype,
+  });
 
   if (type === "ImageUploaded") {
     await axios.post("http://localhost:4001/upload",
@@ -77,7 +78,13 @@ app.post("/events", async (req, res) => {
       });
   }
   if (type === "NewUserCreated") {
-    res.send({ status: "OK" });
+    await axios.post("http://localhost:4001/createUser",
+      formData,
+      {
+        headers: formData.getHeaders()
+      }).catch((err) => {
+        console.log(err.message);
+      });
   }
 
   res.send({});

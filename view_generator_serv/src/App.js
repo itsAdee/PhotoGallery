@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import LoginForm from './components/loginForm';
-import RegisterForm from './components/registerForm';
-import UserContext from './components/usercontext';
+import Login from './components/loginForm';
+import Signup from './components/signUpForm';
+import { useAuthContext } from "./hooks/useAuthContext";
+import { useLogout } from "./hooks/useLogout";
+
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [images, setImages] = useState([]);
-  const [userData, setUserData] = useState({ username: null, id: null });
+  const { user } = useAuthContext();
+  const { logout } = useLogout();
 
   useEffect(() => {
     // Fetch images from the server
@@ -21,9 +24,7 @@ function App() {
         });
     }
     fetchImages();
-  }, []);
-
-  
+  }, [user]);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -56,23 +57,34 @@ function App() {
     }
   };
 
+  const handleClick = async () => {
+    await logout();
+  };
+
   return (
-    <UserContext.Provider value={{ ...userData, setUserData }}>
-      <div className="App">
-        <LoginForm />
-        <RegisterForm />
-        <h1>Upload an image</h1>
-        <form onSubmit={handleUpload}>
-          <input type="file" onChange={handleFileChange} />
-          <input type='submit' />
-        </form>
+
+    <div className="App">
+      {!user && <Login />}
+      {!user && <Signup />}
+      {user && <h1>Welcome {user.username}</h1>}
+      {user && (
         <div>
-          {images.map((image) => (
-            <img key={image._id} src={image.imageUri} alt={image.imageName} />
-          ))}
+          <span>{user.email}</span>
+          <button onClick={handleClick}>Logout</button>
         </div>
+      )}
+      <h1>Upload an image</h1>
+      <form onSubmit={handleUpload}>
+        <input type="file" onChange={handleFileChange} />
+        <input type='submit' />
+      </form>
+      <div>
+        {images && images.map((image) => (
+          <img key={image._id} src={image.imageUri} alt={image.imageName} />
+        ))}
       </div>
-    </UserContext.Provider>
+    </div>
+
   );
 }
 

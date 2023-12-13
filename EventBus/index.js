@@ -12,7 +12,7 @@ app.use(fileUpload());
 
 const events = [];
 
-app.post("/events", (req, res) => {
+app.post("/events", async (req, res) => {
   const event = req.body;
   events.push(event);
 
@@ -28,8 +28,7 @@ app.post("/events", (req, res) => {
       });
     }
 
-
-    axios.post("http://localhost:4001/events",
+    await axios.post("http://localhost:4001/events",
       formData,
       {
         headers: formData.getHeaders()
@@ -37,6 +36,22 @@ app.post("/events", (req, res) => {
         console.log(err.message);
       });
 
+    await axios.post("http://localhost:4002/events",
+      formData,
+      {
+        headers: formData.getHeaders()
+      }).catch((err) => {
+        console.log(err.message);
+      });
+
+    await axios.post("http://localhost:4003/events",
+      formData,
+      {
+        headers: formData.getHeaders()
+      }).catch((err) => {
+        console.log(err.message);
+      });
+    
     res.send({ status: "OK" });
   } catch (err) {
     console.log(err.message);
