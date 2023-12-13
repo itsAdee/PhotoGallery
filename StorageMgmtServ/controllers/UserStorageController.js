@@ -64,8 +64,7 @@ const updateUserStorage = async (req, res, next) => {
         userStorage.usedStorage += Number(file.size);
         await userStorage.save();
 
-        next()
-        // res.status(200).json({ message: "User storage updated." });
+        next();
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error." });

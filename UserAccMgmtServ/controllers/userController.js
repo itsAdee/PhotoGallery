@@ -1,8 +1,6 @@
-
-const express = require('express');
-const router = express.Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const axios = require('axios');
 
 
 const CreateUser = async (req, res) => {
@@ -11,6 +9,21 @@ const CreateUser = async (req, res) => {
   const newUser = new User({ username, password: hashedPassword, email });
   await newUser.save();
   console.log(`User ${username} created.`);
+
+  // Send event to EventBus
+  const formData = new FormData();
+  formData.append('type', 'NewUserCreated')
+  formData.append('userID', newUser._id);
+
+  axios.post('http://localhost:4000/events',
+    formData
+  ).then(async (response) => {
+    console.log(response.data);
+  })
+    .catch((error) => {
+      console.error(error);
+    });
+
   res.status(201).json(newUser);
 };
 

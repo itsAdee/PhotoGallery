@@ -7,6 +7,7 @@ const axios = require("axios");
 const db = require("mongoose");
 const fileUpload = require("express-fileupload");
 const FormData = require('form-data');
+
 const { updateUserStorage, createUser } = require("./controllers/UserStorageController");
 const { uploadImage, getImages } = require("./controllers/ImageController");
 
@@ -18,7 +19,7 @@ app.use(fileUpload());
 
 
 app.post("/upload", updateUserStorage, uploadImage);
-app.post("createUser", createUser);
+app.post("/createUser", createUser);
 app.get("/images", getImages)
 
 
@@ -63,10 +64,12 @@ app.post("/events", async (req, res) => {
   Object.keys(req.body).forEach(key => {
     formData.append(key, req.body[key]);
   });
-  formData.append('file', req.files.file.data, {
-    filename: req.files.file.name,
-    contentType: req.files.file.mimetype,
-  });
+  if (req.files != null && req.files.file != null) {
+    formData.append('file', req.files?.file?.data, {
+      filename: req.files.file.name,
+      contentType: req.files.file.mimetype,
+    });
+  }
 
   if (type === "ImageUploaded") {
     await axios.post("http://localhost:4001/upload",
@@ -78,6 +81,7 @@ app.post("/events", async (req, res) => {
       });
   }
   if (type === "NewUserCreated") {
+    console.log("StorageMgmtServ: Creating user...")
     await axios.post("http://localhost:4001/createUser",
       formData,
       {

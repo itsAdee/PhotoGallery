@@ -21,40 +21,30 @@ app.post("/events", async (req, res) => {
     Object.keys(req.body).forEach(key => {
       formData.append(key, req.body[key]);
     });
-    if (req.files.file) {
-      formData.append('file', req.files.file.data, {
+    if (req.files != null && req.files.file != null) {
+      formData.append('file', req.files?.file?.data, {
         filename: req.files.file.name,
         contentType: req.files.file.mimetype,
       });
     }
 
-    await axios.post("http://localhost:4001/events",
-      formData,
-      {
-        headers: formData.getHeaders()
-      }).catch((err) => {
-        console.log(err.message);
-      });
+    await Promise.all([
+      axios.post("http://localhost:4001/events", formData, {
+        headers: formData.getHeaders(),
+      }),
+      axios.post("http://localhost:4002/events", formData, {
+        headers: formData.getHeaders(),
+      }),
+      axios.post("http://localhost:4003/events", formData, {
+        headers: formData.getHeaders(),
+      }),
+    ]).then(() => {
+      res.send({ status: "OK" });
+    })
 
-    await axios.post("http://localhost:4002/events",
-      formData,
-      {
-        headers: formData.getHeaders()
-      }).catch((err) => {
-        console.log(err.message);
-      });
-
-    await axios.post("http://localhost:4003/events",
-      formData,
-      {
-        headers: formData.getHeaders()
-      }).catch((err) => {
-        console.log(err.message);
-      });
-    
-    res.send({ status: "OK" });
   } catch (err) {
     console.log(err.message);
+    res.status(500).send({ error: "Internal server error" });
   }
 
 });
