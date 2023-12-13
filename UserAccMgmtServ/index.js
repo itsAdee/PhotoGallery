@@ -4,7 +4,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const db = require('mongoose');
-const userRoutes = require('./controllers/userController');
+const multer = require('multer');
+const upload = multer();
+const {LoginUser, CreateUser} = require('./controllers/userController');
+
 
 const app = express();
 app.use(bodyParser.json());
@@ -22,4 +25,5 @@ db.connect(process.env.MONGO_URI)
     console.error(err);
   });
 
-app.use('/', userRoutes);
+  app.post('/register', upload.none(),CreateUser);
+  app.post('/login',upload.none() ,LoginUser);
