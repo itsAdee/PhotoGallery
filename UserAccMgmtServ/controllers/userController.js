@@ -19,7 +19,7 @@ const CreateUser = async (req, res) => {
     formData
   ).then(async (response) => {
     console.log(response.data);
-    console.log(`Event ${response.data.type} sent to EventBus.`);
+   
   })
     .catch((error) => {
       console.error(error.message);
