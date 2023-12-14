@@ -42,7 +42,29 @@ const addNewDailyUsageInstance = async (req, res) => {
     }
 
 }
+
+const resetDailyLimit = async (req, res) => {
+    try {
+        const dailyUsages = await DailyUsage.find();
+
+        if (!dailyUsages) {
+            return res.status(404).json({ message: "Daily usage not found." });
+        }
+
+        dailyUsages.forEach(async (dailyUsage) => {
+            dailyUsage.usedBandwidth = 0;
+            await dailyUsage.save();
+        });
+
+        res.status(200).json({ message: "Daily usage reset." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+
+}
 module.exports = {
     getDailyUsageById,
-    addNewDailyUsageInstance
+    addNewDailyUsageInstance,
+    resetDailyLimit
 }
