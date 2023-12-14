@@ -26,18 +26,17 @@ export const useSignup = () => {
     axios.post('http://localhost:4003/register', formData)
       .then(async (response) => {
         console.log(response.data);
-        const json = await response.json();
-       
-        if (!response.ok) {
+        
+        if (!response.status === 201) {
           setIsLoading(false);
-          setError(json.error);
+          setError(response.data.error);
         }
-        if (response.ok) {
+        if (response.status === 201) {
           // save the user to local storage
-          localStorage.setItem("user", JSON.stringify(json));
-    
+          localStorage.setItem('user', JSON.stringify(response.data));
+
           // update the authContext
-          dispatch({ type: "LOGIN", payload: json });
+          dispatch({ type: 'LOGIN', payload: response.data });
           setIsLoading(false);
           setError(false);
         }

@@ -2,7 +2,7 @@ const db = require("mongoose");
 
 // Define the schema for the Images table
 const imageSchema = new db.Schema({
-    userID: String,
+    userID: db.Schema.Types.ObjectId,
     imageName: String,
     imageSize: Number,
     contentType: String,

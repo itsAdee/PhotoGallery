@@ -19,11 +19,11 @@ export const useLogin = () => {
       .then(response => {
         console.log(response.data);
 
-        if (!response.statusText === 'OK') {
+        if (!response.status === 200) {
           setIsLoading(false);
           setError(response.data.error);
         }
-        if (response.statusText === 'OK') {
+        if (response.status === 200) {
           // save the user to local storage
           localStorage.setItem('user', JSON.stringify(response.data));
 

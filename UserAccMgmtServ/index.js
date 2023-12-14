@@ -19,7 +19,7 @@ app.post('/login', upload.none(), LoginUser);
 app.post("/events", async (req, res) => {
   const { type } = req.body;
 
-  console.log("StorageMgmtServ: Received Event:", type);
+  console.log("UserAccMgmtServ: Received Event:", type);
 
   const formData = new FormData();
   Object.keys(req.body).forEach(key => {

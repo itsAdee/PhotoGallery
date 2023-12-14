@@ -21,7 +21,7 @@ const CreateUser = async (req, res) => {
     console.log(response.data);
   })
     .catch((error) => {
-      console.error(error);
+      console.error(error.message);
     });
 
   res.status(201).json(newUser);
@@ -32,6 +32,9 @@ const LoginUser = async (req, res) => {
   const user = await User.findOne({ username });
   if (user && bcrypt.compare(password, user.password)) {
     console.log(`User ${username} logged in.`);
+
+    user.password = undefined;
+    console.log(user);
     res.status(200).json(user);
   } else {
     console.log(`User ${username} failed to log in.`);

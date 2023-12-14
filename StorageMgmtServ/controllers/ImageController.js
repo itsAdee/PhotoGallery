@@ -5,7 +5,7 @@ const upload = multer({ limits: { fileSize: 1000000 }, dest: '/uploads/' }).sing
 
 const uploadImage = async (req, res) => {
     console.log("Upload Image Successfully Called")
-    const { userID, usedStorage } = req.body;
+    const { userID } = req.body;
     const file = req.files.file;
     try {
         upload(req, res, function (err) {
@@ -47,7 +47,7 @@ const uploadImage = async (req, res) => {
 
 const getImages = async (req, res) => {
     try {
-        const images = await Image.find();
+        const images = await Image.find({ userID: req.params.id});
     
         const modifiedImages = images.map((image) => {
           const base64Data = image.img.toString('base64');

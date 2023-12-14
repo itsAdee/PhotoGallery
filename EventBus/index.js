@@ -28,19 +28,23 @@ app.post("/events", async (req, res) => {
       });
     }
 
-    await Promise.all([
-      axios.post("http://localhost:4001/events", formData, {
-        headers: formData.getHeaders(),
-      }),
-      axios.post("http://localhost:4002/events", formData, {
-        headers: formData.getHeaders(),
-      }),
-      axios.post("http://localhost:4003/events", formData, {
-        headers: formData.getHeaders(),
-      }),
-    ]).then(() => {
+    axios.post("http://localhost:4001/events", formData, {
+      headers: formData.getHeaders(),
+    }).then(() => {
       res.send({ status: "OK" });
-    })
+    });
+
+    axios.post("http://localhost:4002/events", formData, {
+      headers: formData.getHeaders(),
+    }).then(() => {
+      res.send({ status: "OK" });
+    });
+
+    axios.post("http://localhost:4003/events", formData, {
+      headers: formData.getHeaders(),
+    }).then(() => {
+      res.send({ status: "OK" });
+    });
 
   } catch (err) {
     console.log(err.message);

@@ -20,7 +20,7 @@ app.use(fileUpload());
 
 app.post("/upload", updateUserStorage, uploadImage);
 app.post("/createUser", createUser);
-app.get("/images", getImages)
+app.get("/images/:id", getImages)
 
 
 // Endpoint to handle storage usage alert
@@ -71,15 +71,6 @@ app.post("/events", async (req, res) => {
     });
   }
 
-  if (type === "ImageUploaded") {
-    await axios.post("http://localhost:4001/upload",
-      formData,
-      {
-        headers: formData.getHeaders()
-      }).catch((err) => {
-        console.log(err.message);
-      });
-  }
   if (type === "NewUserCreated") {
     console.log("StorageMgmtServ: Creating user...")
     await axios.post("http://localhost:4001/createUser",

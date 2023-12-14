@@ -44,7 +44,7 @@ const getUserStorageById = async (req, res) => {
 
 const updateUserStorage = async (req, res, next) => {
     console.log(req.body)
-    const { userID, usedStorage } = req.body;
+    const { userID } = req.body;
     const file = req.files.file;
     console.log(file.size)
 
