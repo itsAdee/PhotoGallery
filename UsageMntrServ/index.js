@@ -2,14 +2,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
-const { getDailyUsageByIdAndDate } = require("./controllers/DailyUsageController");
+const { getDailyUsageById, addNewDailyUsageInstance } = require("./controllers/DailyUsageController");
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// app.get("/usage", getDailyUsageByIdAndDate);
-// app.post("/createUser");
+app.get("/usage", getDailyUsageById);
+app.post("/createUser", addNewDailyUsageInstance);
 
 app.post("/events", async (req, res) => {
   const { type } = req.body;
@@ -29,19 +29,19 @@ app.post("/events", async (req, res) => {
 
   if (type === "NewUserCreated") {
     console.log("UsageMntrServ: Creating user...")
-    // await axios.post("http://localhost:4002/createUser",
-    //   formData,
-    //   {
-    //     headers: formData.getHeaders()
-    //   }).catch((err) => {
-    //     console.log(err.message);
-    //   });
+    await axios.post("http://localhost:4002/createUser",
+      formData,
+      {
+        headers: formData.getHeaders()
+      }).catch((err) => {
+        console.log(err.message);
+      });
   }
 
   res.send({});
 });
 
 
-  app.listen(4002, () => {
-    console.log("UsageMntrServ: Listening on 4002");
-  });
+app.listen(4002, () => {
+  console.log("UsageMntrServ: Listening on 4002");
+});
