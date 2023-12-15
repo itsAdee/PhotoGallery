@@ -6,7 +6,12 @@ const cors = require("cors");
 const axios = require("axios");
 const cron = require('node-cron');
 const db = require("mongoose");
-const { getDailyUsageById, addNewDailyUsageInstance, resetDailyLimit } = require("./controllers/DailyUsageController");
+const {
+  getDailyUsageById,
+  addNewDailyUsageInstance,
+  resetDailyLimit,
+  updateDailyUsage
+} = require("./controllers/DailyUsageController");
 
 
 const app = express();
@@ -17,41 +22,51 @@ app.use(cors());
 app.get("/usage", getDailyUsageById);
 app.post("/createUser", addNewDailyUsageInstance);
 app.post("/resetDailyLimit", resetDailyLimit);
+app.post("/updateUsage", updateDailyUsage);
 
 
 cron.schedule('0 0 * * *', async () => {
   console.log("UsageMntrServ: Resetting daily limit...");
-  await axios.post("http://localhost:4001/resetDailyLimit").catch((err) => {
+  await axios.post("http://localhost:4002/resetDailyLimit").catch((err) => {
     console.log(err.message);
   });
 });
 
 
 app.post("/events", async (req, res) => {
-  const { type } = req.body;
+  const { type, userID } = req.body;
 
   console.log("UsageMntrServ: Received Event:", type);
 
-  const formData = new FormData();
-  Object.keys(req.body).forEach(key => {
-    formData.append(key, req.body[key]);
-  });
-  if (req.files != null && req.files.file != null) {
-    formData.append('file', req.files?.file?.data, {
-      filename: req.files.file.name,
-      contentType: req.files.file.mimetype,
-    });
-  }
-
   if (type === "NewUserCreated") {
     console.log("UsageMntrServ: Creating user...")
-    await axios.post("http://localhost:4002/createUser",
-      formData,
-      {
-        headers: formData.getHeaders()
-      }).catch((err) => {
-        console.log(err.message);
-      });
+
+    axios.request({
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4002/createUser',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: req.body
+    }).catch((err) => {
+      console.log(err.message);
+    });
+  }
+  if (type === "ImageUploaded") {
+    console.log("UsageMntrServ: Updating usage...")
+
+    await axios.request({
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4002/updateUsage',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: req.body
+    }).catch((err) => {
+      console.log(err.message);
+    });
   }
 
   res.send({});

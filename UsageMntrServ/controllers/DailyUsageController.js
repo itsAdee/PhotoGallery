@@ -1,7 +1,7 @@
 const DailyUsage = require("../models/DailyUsage");
 
 const getDailyUsageById = async (req, res) => {
-    const { userID, date } = req.body;
+    const { userID } = req.body;
 
     try {
         const dailyUsage = await DailyUsage.findOne({ userID });
@@ -19,6 +19,7 @@ const getDailyUsageById = async (req, res) => {
 
 const addNewDailyUsageInstance = async (req, res) => {
     const { userID } = req.body;
+    console.log(userID);
 
     try {
         const dailyUsage = await DailyUsage.findOne({ userID });
@@ -29,8 +30,8 @@ const addNewDailyUsageInstance = async (req, res) => {
 
         const newDailyUsage = new DailyUsage({
             userID,
-            date,
-            usage
+            usedBandwidth: 0,
+            totalBandwidth: 2500000
         });
 
         await newDailyUsage.save();
@@ -45,26 +46,38 @@ const addNewDailyUsageInstance = async (req, res) => {
 
 const resetDailyLimit = async (req, res) => {
     try {
-        const dailyUsages = await DailyUsage.find();
-
-        if (!dailyUsages) {
-            return res.status(404).json({ message: "Daily usage not found." });
-        }
-
-        dailyUsages.forEach(async (dailyUsage) => {
-            dailyUsage.usedBandwidth = 0;
-            await dailyUsage.save();
-        });
-
-        res.status(200).json({ message: "Daily usage reset." });
+        await DailyUsage.updateMany({}, { usedBandwidth: 0 })
+            .then(() => {
+                console.log("Daily usage reset.");
+            });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error." });
     }
+}
 
+const updateDailyUsage = async (req, res) => {
+    const { userID, bandwidth } = req.body;
+
+    try {
+        const dailyUsage = await DailyUsage.findOne({ userID });
+
+        if (!dailyUsage) {
+            return res.status(404).json({ message: "Daily usage not found." });
+        }
+
+        dailyUsage.usedBandwidth += bandwidth;
+        await dailyUsage.save();
+
+        res.status(200).json({ message: "Daily usage updated." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error." });
+    }
 }
 module.exports = {
     getDailyUsageById,
     addNewDailyUsageInstance,
-    resetDailyLimit
+    resetDailyLimit,
+    updateDailyUsage
 }

@@ -1,5 +1,6 @@
 const multer = require("multer");
 const Image = require("../models/Image");
+const axios = require('axios');
 
 const upload = multer({ limits: { fileSize: 1000000 }, dest: '/uploads/' }).single('file');
 
@@ -29,8 +30,25 @@ const uploadImage = async (req, res) => {
                 };
 
                 Image.create(newItem)
-                    .then(function () {
+                    .then(async function () {
                         console.log('Image inserted!');
+
+                        await axios.request({
+                            method: 'post',
+                            maxBodyLength: Infinity,
+                            url: 'http://localhost:4000/events',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: {
+                                type: "ImageUploaded",
+                                userID: userID,
+                                imageName: file.name,
+                                bandwidth: file.size,
+                            }
+                        }).catch((err) => {
+                            console.log(err.message);
+                        });
 
                     })
                     .catch(function (error) {
@@ -47,27 +65,27 @@ const uploadImage = async (req, res) => {
 
 const getImages = async (req, res) => {
     try {
-        const images = await Image.find({ userID: req.params.id});
-    
+        const images = await Image.find({ userID: req.params.id });
+
         const modifiedImages = images.map((image) => {
-          const base64Data = image.img.toString('base64');
-          const imageUri = `data:${image.contentType};base64,${base64Data}`;
-          
-          return {
-            _id: image._id,
-            userID: image.userID,
-            imageName: image.imageName,
-            imageSize: image.imageSize,
-            contentType: image.contentType,
-            imageUri: imageUri,
-          };
+            const base64Data = image.img.toString('base64');
+            const imageUri = `data:${image.contentType};base64,${base64Data}`;
+
+            return {
+                _id: image._id,
+                userID: image.userID,
+                imageName: image.imageName,
+                imageSize: image.imageSize,
+                contentType: image.contentType,
+                imageUri: imageUri,
+            };
         });
-    
+
         res.status(200).json(modifiedImages);
-      } catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error." });
-      }
+    }
 }
 
 module.exports = {

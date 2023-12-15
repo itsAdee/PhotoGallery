@@ -10,7 +10,7 @@ const Dashboard = () => {
     useEffect(() => {
         // Fetch images from the server
         async function fetchImages() {
-            await axios.get('http://localhost:4001/images'+user._id)
+            await axios.get('http://localhost:4001/images/'+user._id)
                 .then((response) => {
                     setImages(response.data);
                 })
@@ -37,7 +37,7 @@ const Dashboard = () => {
             ).then(async (response) => {
                 console.log(response.data);
                 // Refresh the images after successful upload
-                await axios.get('http://localhost:4001/images')
+                await axios.get('http://localhost:4001/images/'+user._id)
                     .then((response) => {
                         setImages(response.data);
                     })

@@ -4,8 +4,7 @@ const db = require("mongoose");
 const dailyUsageSchema = new db.Schema({
     userID: db.Schema.Types.ObjectId,
     usedBandwidth: Number,
-    totalBandwidth: Number,
-    date: db.Schema.Types.Date
+    totalBandwidth: Number
 });
 
 // Create a Mongoose model for the Images table

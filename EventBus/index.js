@@ -2,45 +2,48 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
-const fileUpload = require('express-fileupload');
-const FormData = require('form-data');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-app.use(fileUpload());
 
 const events = [];
 
 app.post("/events", async (req, res) => {
   const event = req.body;
+  console.log("EventBus: Received Event:", req);
   events.push(event);
 
   try {
-    const formData = new FormData();
-    Object.keys(req.body).forEach(key => {
-      formData.append(key, req.body[key]);
+    await axios.request({
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4001/events',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : req.body
     });
-    if (req.files != null && req.files.file != null) {
-      formData.append('file', req.files?.file?.data, {
-        filename: req.files.file.name,
-        contentType: req.files.file.mimetype,
-      });
-    }
 
-    const headers = formData.getHeaders();
+    await axios.request({
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4002/events',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : req.body
+    });
 
-    await axios.post("http://localhost:4001/events", formData, {
-      headers,
-    })
-
-    await axios.post("http://localhost:4002/events", formData, {
-      headers,
-    })
-
-    await axios.post("http://localhost:4003/events", formData, {
-      headers,
-    })
+    await axios.request({
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4003/events',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : req.body
+    });
 
     res.send({ status: "OK" });
 
@@ -50,6 +53,7 @@ app.post("/events", async (req, res) => {
   }
 
 });
+
 
 app.get("/events", (req, res) => {
   res.send(events);

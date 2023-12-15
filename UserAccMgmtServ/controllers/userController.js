@@ -11,19 +11,28 @@ const CreateUser = async (req, res) => {
   console.log(`User ${username} created.`);
 
   // Send event to EventBus
-  const formData = new FormData();
-  formData.append('type', 'NewUserCreated')
-  formData.append('userID', newUser._id);
-
-  axios.post('http://localhost:4000/events',
-    formData
-  ).then(async (response) => {
-    console.log(response.data);
-   
+  let data = JSON.stringify({
+    "type": "NewUserCreated",
+    "userID": newUser._id
+  });
+  
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'http://localhost:4000/events',
+    headers: { 
+      'Content-Type': 'application/json'
+    },
+    data : data
+  };
+  
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
   })
-    .catch((error) => {
-      console.error(error.message);
-    });
+  .catch((error) => {
+    console.log(error);
+  });
 
   res.status(201).json(newUser);
 };

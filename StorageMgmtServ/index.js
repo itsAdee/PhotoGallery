@@ -56,30 +56,25 @@ app.post("/usageAlert", async (req, res) => {
 
 
 app.post("/events", async (req, res) => {
-  const { type } = req.body;
+  const { type, userID } = req.body;
 
   console.log("StorageMgmtServ: Received Event:", type);
 
-  const formData = new FormData();
-  Object.keys(req.body).forEach(key => {
-    formData.append(key, req.body[key]);
-  });
-  if (req.files != null && req.files.file != null) {
-    formData.append('file', req.files?.file?.data, {
-      filename: req.files.file.name,
-      contentType: req.files.file.mimetype,
-    });
-  }
-
   if (type === "NewUserCreated") {
     console.log("StorageMgmtServ: Creating user...")
-    await axios.post("http://localhost:4001/createUser",
-      formData,
-      {
-        headers: formData.getHeaders()
-      }).catch((err) => {
-        console.log(err.message);
-      });
+
+    await axios.request({
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4001/createUser',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: req.body
+    }).catch((err) => {
+      console.log(err.message);
+    });
+
   }
 
   res.send({});
