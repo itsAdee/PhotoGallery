@@ -11,7 +11,6 @@ const events = [];
 
 app.post("/events", async (req, res) => {
   const event = req.body;
-  console.log("EventBus: Received Event:", req);
   events.push(event);
 
   try {
