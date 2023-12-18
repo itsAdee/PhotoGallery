@@ -5,3 +5,8 @@ UserAccMgmtServ/node_modules
 view_generator_serv/node_modules
 
 StorageMgmtServ/.env
+UserAccMgmtServ/.env
+view_generator_serv/.env
+UsageMntrServ/.env
+EventBus/.env
+```
