@@ -1,34 +1,25 @@
-import Login from './components/loginForm';
-import Signup from './components/signUpForm';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import { useAuthContext } from "./hooks/useAuthContext";
-import { useLogout } from "./hooks/useLogout";
-
+import Navbar from './components/Navbar';
 
 function App() {
-  
+
   const { user } = useAuthContext();
-  const { logout } = useLogout();
-
-  
-
-  const handleClick = async () => {
-    await logout();
-  };
 
   return (
 
-    <div className="App">
-      {!user && <Login />}
-      {!user && <Signup />}
-      {user && <h1>Welcome {user.username}</h1>}
-      {user && (
-        <div>
-          <span>{user.email}</span>
-          <button onClick={handleClick}>Logout</button>
-        </div>
-      )}
-      {user && <Dashboard />}
+    <div className='App'>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path='/' element={user ? <Dashboard /> : <Navigate to='/login' />} />
+          <Route path='/login' element={!user ? <Login /> : <Navigate to='/' />} />
+          <Route path='/signup' element={!user ? <Signup /> : <Navigate to='/' />} />
+        </Routes>
+      </BrowserRouter>
     </div>
 
   );

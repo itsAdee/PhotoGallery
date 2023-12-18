@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuthContext } from '../hooks/useAuthContext';
+import ImageCard from '../components/ImageCard';
+// import "./css/styles.css";
 
 const Dashboard = () => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -63,22 +65,22 @@ const Dashboard = () => {
     };
 
     return (
-        <div>
+        <>
             <h1>Dashboard</h1>
-            <h1>Upload an image</h1>
-            <form onSubmit={handleUpload}>
-                <input type="file" onChange={handleFileChange} />
-                <input type='submit' />
-            </form>
             <div>
-                {images && images.map((image) => (
-                    <div key={image._id}>
-                        <img key={image._id} src={image.imageUri} alt={image.imageName} />
-                        <button onClick={() => handleDelete(image._id)}>Delete</button>
-                    </div>
-                ))}
+                <h1>Upload a new picture</h1>
+                <form onSubmit={handleUpload} className="upload-form">
+                    <input type="file" onChange={handleFileChange} />
+                    <input type='submit' />
+                </form>
+
+                <div className="images">
+                    {images.map((image) => (
+                        <ImageCard key={image._id}  id={image._id} imageUri={image.imageUri} imageName={image.imageName} onDelete={handleDelete} />
+                    ))}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 
