@@ -3,7 +3,7 @@ const db = require("mongoose");
 // Define the schema for the Images table
 const usageRequestSchema = new db.Schema({
     userID: db.Schema.Types.ObjectId,
-    requestedBandwidth: Number
+    usedBandwidth: Number
 });
 
 // Create a Mongoose model for the Images table

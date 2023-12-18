@@ -8,8 +8,8 @@ const db = require("mongoose");
 const fileUpload = require("express-fileupload");
 const FormData = require('form-data');
 
-const { updateUserStorage, createUser } = require("./controllers/UserStorageController");
-const { uploadImage, getImages } = require("./controllers/ImageController");
+const { updateUserStorageOnUpload, createUser, updateUserStorageOnDeletion, deleteUser } = require("./controllers/UserStorageController");
+const { uploadImage, getImages, deleteImage } = require("./controllers/ImageController");
 
 
 const app = express();
@@ -18,9 +18,11 @@ app.use(cors());
 app.use(fileUpload());
 
 
-app.post("/upload", updateUserStorage, uploadImage);
+app.post("/upload", updateUserStorageOnUpload, uploadImage);
 app.post("/createUser", createUser);
-app.get("/images/:id", getImages)
+app.get("/images/:id", getImages);
+app.delete("/images/:id", deleteImage);
+app.post("/updateUserStorageOnDeletion", updateUserStorageOnDeletion);
 
 
 // Endpoint to handle storage usage alert
@@ -56,7 +58,7 @@ app.post("/usageAlert", async (req, res) => {
 
 
 app.post("/events", async (req, res) => {
-  const { type, userID } = req.body;
+  const { type } = req.body;
 
   console.log("StorageMgmtServ: Received Event:", type);
 
@@ -75,6 +77,21 @@ app.post("/events", async (req, res) => {
       console.log(err.message);
     });
 
+  }
+  if (type === "ImageDeleted") {
+    console.log("StorageMgmtServ: Deleting image...")
+
+    await axios.request({
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4001/updateUserStorageOnDeletion',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: req.body
+    }).catch((err) => {
+      console.log(err.message);
+    });
   }
 
   res.send({});

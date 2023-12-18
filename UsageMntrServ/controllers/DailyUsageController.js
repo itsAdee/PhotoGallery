@@ -1,10 +1,10 @@
 const DailyUsage = require("../models/DailyUsage");
 
 const getDailyUsageById = async (req, res) => {
-    const { userID } = req.body;
+    const { id } = req.params;
 
     try {
-        const dailyUsage = await DailyUsage.findOne({ userID });
+        const dailyUsage = await DailyUsage.findOne({ id });
 
         if (!dailyUsage) {
             return res.status(404).json({ message: "Daily usage not found." });
@@ -56,7 +56,7 @@ const resetDailyLimit = async (req, res) => {
     }
 }
 
-const updateDailyUsage = async (req, res) => {
+const updateDailyUsage = async (req, res, next) => {
     const { userID, bandwidth } = req.body;
 
     try {
@@ -69,7 +69,7 @@ const updateDailyUsage = async (req, res) => {
         dailyUsage.usedBandwidth += bandwidth;
         await dailyUsage.save();
 
-        res.status(200).json({ message: "Daily usage updated." });
+        next();
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error." });

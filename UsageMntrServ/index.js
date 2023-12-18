@@ -13,16 +13,18 @@ const {
   updateDailyUsage
 } = require("./controllers/DailyUsageController");
 
+const { addUsageRequest } = require("./controllers/UsageRequestController");
+
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
 
-app.get("/usage", getDailyUsageById);
+app.get("/usage/:id", getDailyUsageById);
 app.post("/createUser", addNewDailyUsageInstance);
 app.post("/resetDailyLimit", resetDailyLimit);
-app.post("/updateUsage", updateDailyUsage);
+app.post("/updateUsage", updateDailyUsage, addUsageRequest);
 
 
 cron.schedule('0 0 * * *', async () => {
@@ -34,7 +36,7 @@ cron.schedule('0 0 * * *', async () => {
 
 
 app.post("/events", async (req, res) => {
-  const { type, userID } = req.body;
+  const { type } = req.body;
 
   console.log("UsageMntrServ: Received Event:", type);
 

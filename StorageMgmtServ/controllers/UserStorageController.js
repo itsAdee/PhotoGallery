@@ -1,4 +1,5 @@
 const UserStorage = require('../models/UserStorage');
+const axios = require("axios");
 
 const createUser = async (req, res) => {
     const { userID } = req.body;
@@ -43,7 +44,7 @@ const getUserStorageById = async (req, res) => {
     }
 }
 
-const updateUserStorage = async (req, res, next) => {
+const updateUserStorageOnUpload = async (req, res, next) => {
     console.log(req.body)
     const { userID } = req.body;
     const file = req.files.file;
@@ -62,6 +63,21 @@ const updateUserStorage = async (req, res, next) => {
             return res.status(400).json({ message: "Not enough storage." });
         }
 
+        const usage = await axios.request({
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: 'http://localhost:4002/usage/' + userID,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).catch((err) => {
+            console.log(err.message);
+        })
+
+        if (usage && parseInt(usage.usedBandwidth) + parseInt(file.size) > parseInt(usage.totalBandwidth)) {
+            return res.status(400).json({ message: "Not enough bandwidth." });
+        }
+
         userStorage.usedStorage += Number(file.size);
         await userStorage.save();
 
@@ -72,6 +88,27 @@ const updateUserStorage = async (req, res, next) => {
     }
 }
 
+const updateUserStorageOnDeletion = async (req, res) => {
+    const { userID, imageSize } = req.body;
+
+    try {
+        const userStorage = await UserStorage.findOne({ userID });
+
+        if (!userStorage) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        userStorage.usedStorage -= Number(imageSize);
+        await userStorage.save();
+
+        res.status(200).json({ message: "User storage updated on Image Deletion." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+
+}
+
 module.exports = {
-    getUserStorageById, updateUserStorage, createUser
+    getUserStorageById, updateUserStorageOnUpload, createUser, updateUserStorageOnDeletion
 };

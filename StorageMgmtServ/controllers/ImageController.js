@@ -30,8 +30,20 @@ const uploadImage = async (req, res) => {
                 };
 
                 Image.create(newItem)
-                    .then(async function () {
+                    .then(async (result) => {
                         console.log('Image inserted!');
+
+                        const base64Data = result.img.toString('base64');
+                        const imageUri = `data:${result.contentType};base64,${base64Data}`;
+
+                        const modifiedImage = {
+                            _id: result._id,
+                            userID: result.userID,
+                            imageName: result.imageName,
+                            imageSize: result.imageSize,
+                            contentType: result.contentType,
+                            imageUri: imageUri,
+                        };
 
                         await axios.request({
                             method: 'post',
@@ -50,6 +62,7 @@ const uploadImage = async (req, res) => {
                             console.log(err.message);
                         });
 
+                        res.status(200).json(modifiedImage);
                     })
                     .catch(function (error) {
                         console.error('Error inserting image:', error);
@@ -88,7 +101,44 @@ const getImages = async (req, res) => {
     }
 }
 
+const deleteImage = async (req, res) => {
+    try {
+        const image = await Image.findById(req.params.id);
+        const userID = image.userID;
+        const file = { name: image.imageName, size: image.imageSize };
+
+        if (!image) {
+            return res.status(404).json({ message: "Image not found." });
+        }
+
+        await image.deleteOne({ _id: req.params.id });
+
+        await axios.request({
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'http://localhost:4000/events',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: {
+                type: "ImageDeleted",
+                userID: userID,
+                imageName: file.name,
+                imageSize: file.size,
+            }
+        }).catch((err) => {
+            console.log(err.message);
+        });
+
+        res.status(200).json({ message: "Image deleted." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+}
+
 module.exports = {
     uploadImage,
-    getImages
+    getImages,
+    deleteImage
 };

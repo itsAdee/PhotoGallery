@@ -10,46 +10,58 @@ const Dashboard = () => {
     useEffect(() => {
         // Fetch images from the server
         async function fetchImages() {
-            await axios.get('http://localhost:4001/images/'+user._id)
-                .then((response) => {
-                    setImages(response.data);
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+            try {
+                const response = await axios.get('http://localhost:4001/images/' + user._id);
+                setImages(response.data);
+            } catch (error) {
+                console.error(error);
+            }
         }
         fetchImages();
     }, [user]);
+
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
     };
 
-    const handleUpload = (event) => {
+    const handleUpload = async (event) => {
         event.preventDefault();
         if (selectedFile && user) {
             const formData = new FormData();
             formData.append('file', selectedFile);
             formData.append('userID', user._id);
 
-            axios.post('http://localhost:4001/upload',
+            await axios.post('http://localhost:4001/upload',
                 formData
             ).then(async (response) => {
                 console.log(response.data);
-                // Refresh the images after successful upload
-                await axios.get('http://localhost:4001/images/'+user._id)
-                    .then((response) => {
-                        setImages(response.data);
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            })
-                .catch((error) => {
-                    console.error(error);
-                });
+
+                if (response.status === 200) {
+                    setImages(prevImages => [...prevImages, response.data]);
+                }
+
+            }).catch((error) => {
+                console.error(error);
+            });
         }
     };
+
+    const handleDelete = async (imageId) => {
+        await axios.request({
+            method: 'DELETE',
+            url: `http://localhost:4001/images/${imageId}`
+
+        }).then((response) => {
+            if (response.status === 200) {
+                console.log(response.data);
+                setImages(prevImages => prevImages.filter((image) => image._id !== imageId));
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    };
+
     return (
         <div>
             <h1>Dashboard</h1>
@@ -60,7 +72,10 @@ const Dashboard = () => {
             </form>
             <div>
                 {images && images.map((image) => (
-                    <img key={image._id} src={image.imageUri} alt={image.imageName} />
+                    <div key={image._id}>
+                        <img key={image._id} src={image.imageUri} alt={image.imageName} />
+                        <button onClick={() => handleDelete(image._id)}>Delete</button>
+                    </div>
                 ))}
             </div>
         </div>
