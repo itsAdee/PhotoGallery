@@ -1,46 +1,58 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { randomBytes } = require("crypto");
 const cors = require("cors");
 const axios = require("axios");
-const fileUpload = require('express-fileupload');
-const FormData = require('form-data');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-app.use(fileUpload());
 
 const events = [];
 
-app.post("/events", (req, res) => {
+app.post("/events", async (req, res) => {
   const event = req.body;
   events.push(event);
 
   try {
-    const formData = new FormData();
-    Object.keys(req.body).forEach(key => {
-      formData.append(key, req.body[key]);
-    });
-    formData.append('file', req.files.file.data, {
-      filename: req.files.file.name,
-      contentType: req.files.file.mimetype,
+    await axios.request({
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4001/events',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : req.body
     });
 
-    axios.post("http://localhost:4001/events",
-      formData,
-      {
-        headers: formData.getHeaders()
-      }).catch((err) => {
-        console.log(err.message);
-      });
+    await axios.request({
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4002/events',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : req.body
+    });
+
+    await axios.request({
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4003/events',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : req.body
+    });
 
     res.send({ status: "OK" });
+
   } catch (err) {
     console.log(err.message);
+    res.status(500).send({ error: "Internal server error" });
   }
 
 });
+
 
 app.get("/events", (req, res) => {
   res.send(events);
