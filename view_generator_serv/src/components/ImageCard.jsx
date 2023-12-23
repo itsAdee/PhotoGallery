@@ -1,7 +1,28 @@
-import React from 'react';
-import { Box, Button, Image } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Box, Button, Image, Input } from '@chakra-ui/react';
 
 function ImageCard(props) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState(props.imageName);
+
+  const handleRenameClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleSaveRename = () => {
+    props.onRename(props.id, newName);
+    setIsEditing(false);
+  };
+
+  const handleCancelRename = () => {
+    setNewName(props.imageName);
+    setIsEditing(false);
+  };
+
+  const handleOpenImage = () => {
+    props.onOpenImage(props.id);
+  };
+
   return (
     <Box
       className="image-container"
@@ -15,8 +36,37 @@ function ImageCard(props) {
       <Image src={props.imageUri} alt={props.imageName} width="300px" />
 
       <Button onClick={() => props.onDelete(props.id)} mt="2" colorScheme="red">
-        <Image src={require('./images/delete.png')} alt="delete icon" width="20px" cursor="pointer" />
+        Delete
       </Button>
+
+      <Button onClick={handleOpenImage} mt="2" ml="2" colorScheme="teal">
+        Open
+      </Button>
+
+      {!isEditing ? (
+        <>
+          <Button onClick={handleRenameClick} mt="2" ml="2" colorScheme="blue">
+            Rename
+          </Button>
+        </>
+      ) : (
+        <>
+          <Input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            mr="2"
+            mt="2"
+            width="60%"
+          />
+          <Button onClick={handleSaveRename} mt="2" ml="2" colorScheme="green">
+            Save
+          </Button>
+          <Button onClick={handleCancelRename} mt="2" ml="2" colorScheme="gray">
+            Cancel
+          </Button>
+        </>
+      )}
     </Box>
   );
 }
