@@ -6,8 +6,8 @@ const imageSchema = new db.Schema({
     imageName: String,
     imageSize: Number,
     contentType: String,
-    img: Buffer,
-});
+    img: Buffer
+}, { timestamps: true });
 
 // Create a Mongoose model for the Images table
 module.exports = db.model('Image', imageSchema);

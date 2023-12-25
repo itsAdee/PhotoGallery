@@ -80,6 +80,10 @@ const getImages = async (req, res) => {
     try {
         const images = await Image.find({ userID: req.params.id });
 
+        if (!images) {
+            return res.status(404).json({ message: `Images not found.` });
+        }
+
         const modifiedImages = images.map((image) => {
             const base64Data = image.img.toString('base64');
             const imageUri = `data:${image.contentType};base64,${base64Data}`;
@@ -90,6 +94,8 @@ const getImages = async (req, res) => {
                 imageName: image.imageName,
                 imageSize: image.imageSize,
                 contentType: image.contentType,
+                createdAt: image.createdAt,
+                updatedAt: image.updatedAt,
                 imageUri: imageUri,
             };
         });

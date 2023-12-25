@@ -1,10 +1,10 @@
 const DailyUsage = require("../models/DailyUsage");
 
 const getDailyUsageById = async (req, res) => {
-    const { id } = req.params;
+    const { userID } = req.params;
 
     try {
-        const dailyUsage = await DailyUsage.findOne({ id });
+        const dailyUsage = await DailyUsage.findOne({ userID });
 
         if (!dailyUsage) {
             return res.status(404).json({ message: "Daily usage not found." });

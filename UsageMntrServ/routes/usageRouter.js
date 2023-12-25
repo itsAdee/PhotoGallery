@@ -2,7 +2,6 @@ const express = require('express');
 const usageRouter = express.Router();
 const axios = require("axios");
 const {
-    getDailyUsageById,
     addNewDailyUsageInstance,
     resetDailyLimit,
     updateDailyUsage
@@ -10,7 +9,6 @@ const {
 
 const { addUsageRequest } = require("../controllers/UsageRequestController");
 
-usageRouter.get("/usage/:id", getDailyUsageById);
 usageRouter.post("/createUser", addNewDailyUsageInstance);
 usageRouter.post("/resetDailyLimit", resetDailyLimit);
 usageRouter.post("/updateUsage", updateDailyUsage, addUsageRequest);
