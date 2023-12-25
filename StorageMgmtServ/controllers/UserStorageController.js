@@ -1,7 +1,7 @@
 const UserStorage = require('../models/UserStorage');
 const axios = require("axios");
 
-const createUser = async (req, res) => {
+const createUserStorage = async (req, res) => {
     const { userID } = req.body;
 
     try {
@@ -66,7 +66,7 @@ const updateUserStorageOnUpload = async (req, res, next) => {
         const usage = await axios.request({
             method: 'get',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4002/usage/' + userID,
+            url: 'http://localhost:4002/api/usageMntr/usage/' + userID,
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -110,5 +110,5 @@ const updateUserStorageOnDeletion = async (req, res) => {
 }
 
 module.exports = {
-    getUserStorageById, updateUserStorageOnUpload, createUser, updateUserStorageOnDeletion
+    getUserStorageById, updateUserStorageOnUpload, createUserStorage, updateUserStorageOnDeletion
 };

@@ -9,7 +9,7 @@ app.use(cors());
 
 const events = [];
 
-app.post("/events", async (req, res) => {
+app.post("api/eventbus/events", async (req, res) => {
   const event = req.body;
   events.push(event);
 
@@ -17,7 +17,7 @@ app.post("/events", async (req, res) => {
     await axios.request({
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:4001/events',
+      url: 'http://localhost:4001/api/storageMgmt/events',
       headers: { 
         'Content-Type': 'application/json'
       },
@@ -27,7 +27,7 @@ app.post("/events", async (req, res) => {
     await axios.request({
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:4002/events',
+      url: 'http://localhost:4002/api/usageMntr/events',
       headers: { 
         'Content-Type': 'application/json'
       },
@@ -37,7 +37,7 @@ app.post("/events", async (req, res) => {
     await axios.request({
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:4003/events',
+      url: 'http://localhost:4003/api/userAcc/events',
       headers: { 
         'Content-Type': 'application/json'
       },

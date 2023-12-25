@@ -48,7 +48,7 @@ const uploadImage = async (req, res) => {
                         await axios.request({
                             method: 'post',
                             maxBodyLength: Infinity,
-                            url: 'http://localhost:4000/events',
+                            url: 'http://localhost:4000/api/eventbus/events',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
@@ -116,7 +116,7 @@ const deleteImage = async (req, res) => {
         await axios.request({
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4000/events',
+            url: 'http://localhost:4000/api/eventbus/events',
             headers: {
                 'Content-Type': 'application/json'
             },
