@@ -3,11 +3,16 @@ const imageRouter = express.Router();
 const {
     getImages,
     deleteImage,
-    renameImage
+    renameImage,
+    uploadImage
 } = require("../controllers/ImageController");
+const fileUpload = require("express-fileupload");
 
+imageRouter.use(fileUpload());
+
+imageRouter.post("/upload", uploadImage);
 imageRouter.get("/user/:userID", getImages);
+imageRouter.put("rename/:id/user/:userID", renameImage);
 imageRouter.delete("/:id/user/:userID", deleteImage);
-imageRouter.put("/:id/user/:userID", renameImage);
 
 module.exports = { imageRouter };

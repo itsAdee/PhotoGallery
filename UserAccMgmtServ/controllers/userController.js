@@ -4,10 +4,22 @@ const axios = require('axios');
 
 const CreateUser = async (req, res) => {
   const { username, password, confirmpassword, email } = req.body;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  const user = await User.findOne({ $or: [{ username }, { email }] });
+  if (user) {
+    console.log(`User ${username} or email ${email} already exists.`);
+    res.status(400).send({ message: `User ${username} or email ${email} already exists.` });
+    return;
+  }
 
   if (!username || !password || !confirmpassword || !email) {
     console.log(`Username, password, email, or confirm password not provided.`);
     res.status(400).send({ message: `Username, password, email, or confirm password not provided.` });
+    return;
+  } else if (!passwordRegex.test(password)) {
+    console.log(`Password does not meet the requirements.`);
+    res.status(400).send({ message: `Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long.` });
     return;
   } else if (password !== confirmpassword) {
     console.log(`Passwords do not match.`);
@@ -30,8 +42,8 @@ const CreateUser = async (req, res) => {
         'Content-Type': 'application/json'
       },
       data: JSON.stringify({
-        "type": "NewUserCreated",
-        "userID": newUser._id
+        type: "NewUserCreated",
+        userID: newUser._id
       })
     }).then((response) => {
       console.log(JSON.stringify(response.data));

@@ -8,12 +8,14 @@ const cron = require('node-cron');
 const db = require("mongoose");
 const { usageRouter } = require("./routes/usageRouter");
 const { usageRequestRouter } = require("./routes/usageRequestRouter");
+const { eventRouter } = require("./routes/eventRouter");
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use("/api/usageMntr/usage/user/:userID", usageRequestRouter);
+app.use("/api/usageMntr/usage", usageRequestRouter);
+app.use("/api/usageMntr/events", eventRouter);
 app.use('/api/usageMntr', usageRouter);
 
 // Reset daily limit at midnight

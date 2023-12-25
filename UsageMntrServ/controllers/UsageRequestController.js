@@ -1,4 +1,5 @@
 const UsageRequest = require('../models/UsageRequest');
+const mongoose = require('mongoose');
 
 const addUsageRequest = async (req, res) => {
     const { userID, bandwidth, requestType } = req.body;
@@ -20,7 +21,7 @@ const addUsageRequest = async (req, res) => {
 }
 
 const getUsageRequestsByDay = async (req, res) => {
-    const { userID } = req.params;
+    const userID = new mongoose.Types.ObjectId(req.params.userID);
 
     try {
         const usageRequests = await UsageRequest.aggregate([
@@ -55,7 +56,7 @@ const getUsageRequestsByDay = async (req, res) => {
 }
 
 const getUsageRequestsByMonth = async (req, res) => {
-    const { userID } = req.params;
+    const userID = new mongoose.Types.ObjectId(req.params.userID);
 
     try {
         const usageRequests = await UsageRequest.aggregate([
@@ -89,7 +90,7 @@ const getUsageRequestsByMonth = async (req, res) => {
 }
 
 const getUsageRequestsByYear = async (req, res) => {
-    const { userID } = req.params;
+    const userID = new mongoose.Types.ObjectId(req.params.userID);
 
     try {
         const usageRequests = await UsageRequest.aggregate([

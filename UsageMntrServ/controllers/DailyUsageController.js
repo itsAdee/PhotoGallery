@@ -1,7 +1,9 @@
 const DailyUsage = require("../models/DailyUsage");
 
 const getDailyUsageById = async (req, res) => {
+    console.log("Getting daily usage by ID");
     const { userID } = req.params;
+    console.log(userID);
 
     try {
         const dailyUsage = await DailyUsage.findOne({ userID });

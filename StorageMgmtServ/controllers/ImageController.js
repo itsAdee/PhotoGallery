@@ -8,6 +8,40 @@ const uploadImage = async (req, res) => {
     console.log("Upload Image Successfully Called")
     const { userID } = req.body;
     const file = req.files.file;
+    console.log(file);
+    console.log(userID);
+
+    const storage = await axios.request({
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:4001/api/storageMgmt/storage/' + userID,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).catch((err) => {
+        console.log(err.message);
+    })
+
+    console.log(storage);
+    if (!storage || parseInt(storage.usedStorage) + parseInt(file.size) > parseInt(storage.totalStorage)) {
+        return res.status(400).json({ message: "Not enough storage." });
+    }
+
+    const usage = await axios.request({
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:4002/api/usageMntr/usage/' + userID,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).catch((err) => {
+        console.log(err.message);
+    })
+
+    if (usage && parseInt(usage.usedBandwidth) + parseInt(file.size) > parseInt(usage.totalBandwidth)) {
+        return res.status(400).json({ message: "Not enough bandwidth." });
+    }
+
     try {
         upload(req, res, function (err) {
             if (err) {
@@ -57,6 +91,7 @@ const uploadImage = async (req, res) => {
                                 userID: userID,
                                 imageName: file.name,
                                 bandwidth: file.size,
+                                requestType: "Upload"
                             }
                         }).catch((err) => {
                             console.log(err.message);

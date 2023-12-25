@@ -9,9 +9,9 @@ const {
     getUsageRequestsByYear
 } = require("../controllers/UsageRequestController");
 
-usageRequestRouter.get("/", getDailyUsageById);
-usageRequestRouter.get("/day", getUsageRequestsByDay);
-usageRequestRouter.get("/month", getUsageRequestsByMonth);
-usageRequestRouter.get("/year", getUsageRequestsByYear);
+usageRequestRouter.get("/user/:userID/", getDailyUsageById);
+usageRequestRouter.get("/user/:userID/day", getUsageRequestsByDay);
+usageRequestRouter.get("/user/:userID/month", getUsageRequestsByMonth);
+usageRequestRouter.get("/user/:userID/year", getUsageRequestsByYear);
 
 module.exports = { usageRequestRouter };
