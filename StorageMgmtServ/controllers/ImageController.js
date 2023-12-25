@@ -8,6 +8,40 @@ const uploadImage = async (req, res) => {
     console.log("Upload Image Successfully Called")
     const { userID } = req.body;
     const file = req.files.file;
+    console.log(file);
+    console.log(userID);
+
+    const storage = await axios.request({
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:4001/api/storageMgmt/storage/' + userID,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).catch((err) => {
+        console.log(err.message);
+    })
+
+    console.log(storage);
+    if (!storage || parseInt(storage.usedStorage) + parseInt(file.size) > parseInt(storage.totalStorage)) {
+        return res.status(400).json({ message: "Not enough storage." });
+    }
+
+    const usage = await axios.request({
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:4002/api/usageMntr/usage/' + userID,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).catch((err) => {
+        console.log(err.message);
+    })
+
+    if (usage && parseInt(usage.usedBandwidth) + parseInt(file.size) > parseInt(usage.totalBandwidth)) {
+        return res.status(400).json({ message: "Not enough bandwidth." });
+    }
+
     try {
         upload(req, res, function (err) {
             if (err) {
@@ -48,7 +82,7 @@ const uploadImage = async (req, res) => {
                         await axios.request({
                             method: 'post',
                             maxBodyLength: Infinity,
-                            url: 'http://localhost:4000/events',
+                            url: 'http://localhost:4000/api/eventbus/events',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
@@ -57,6 +91,7 @@ const uploadImage = async (req, res) => {
                                 userID: userID,
                                 imageName: file.name,
                                 bandwidth: file.size,
+                                requestType: "Upload"
                             }
                         }).catch((err) => {
                             console.log(err.message);
@@ -77,8 +112,13 @@ const uploadImage = async (req, res) => {
 }
 
 const getImages = async (req, res) => {
+    const { userID } = req.params;
     try {
-        const images = await Image.find({ userID: req.params.id });
+        const images = await Image.find({ userID });
+
+        if (!images) {
+            return res.status(404).json({ message: `Images not found.` });
+        }
 
         const modifiedImages = images.map((image) => {
             const base64Data = image.img.toString('base64');
@@ -90,6 +130,8 @@ const getImages = async (req, res) => {
                 imageName: image.imageName,
                 imageSize: image.imageSize,
                 contentType: image.contentType,
+                createdAt: image.createdAt,
+                updatedAt: image.updatedAt,
                 imageUri: imageUri,
             };
         });
@@ -102,9 +144,9 @@ const getImages = async (req, res) => {
 }
 
 const deleteImage = async (req, res) => {
+    const { id, userID } = req.params;
     try {
-        const image = await Image.findById(req.params.id);
-        const userID = image.userID;
+        const image = await Image.find({ _id: id, userID });
         const file = { name: image.imageName, size: image.imageSize };
 
         if (!image) {
@@ -116,7 +158,7 @@ const deleteImage = async (req, res) => {
         await axios.request({
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4000/events',
+            url: 'http://localhost:4000/api/eventbus/events',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -137,8 +179,28 @@ const deleteImage = async (req, res) => {
     }
 }
 
+const renameImage = async (req, res) => {
+    const { id, userID } = req.params;
+    const { imageName } = req.body;
+    try {
+        const image = await Image.find({ _id: id, userID });
+
+        if (!image) {
+            return res.status(404).json({ message: "Image not found." });
+        }
+
+        await image.updateOne({ imageName });
+
+        res.status(200).json({ message: "Image renamed." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+}
+
 module.exports = {
     uploadImage,
     getImages,
-    deleteImage
+    deleteImage,
+    renameImage
 };

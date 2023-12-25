@@ -1,8 +1,8 @@
 const UserStorage = require('../models/UserStorage');
-const axios = require("axios");
 
-const createUser = async (req, res) => {
+const createUserStorage = async (req, res) => {
     const { userID } = req.body;
+    console.log("Creating user storage for user: " + userID);
 
     try {
         const userStorage = await UserStorage.findOne({ userID });
@@ -28,7 +28,7 @@ const createUser = async (req, res) => {
 }
 
 const getUserStorageById = async (req, res) => {
-    const { userID } = req;
+    const { userID } = req.params;
 
     try {
         const userStorage = await UserStorage.findOne({ userID });
@@ -44,12 +44,8 @@ const getUserStorageById = async (req, res) => {
     }
 }
 
-const updateUserStorageOnUpload = async (req, res, next) => {
-    console.log(req.body)
-    const { userID } = req.body;
-    const file = req.files.file;
-    console.log(file.size)
-
+const updateUserStorageOnUpload = async (req, res) => {
+    const { userID, bandwidth } = req.body;
 
     try {
         const userStorage = await UserStorage.findOne({ userID });
@@ -59,29 +55,10 @@ const updateUserStorageOnUpload = async (req, res, next) => {
             return res.status(404).json({ message: "User not found." });
         }
 
-        if (file && parseInt(file.size) + parseInt(userStorage.usedStorage) > parseInt(userStorage.totalStorage)) {
-            return res.status(400).json({ message: "Not enough storage." });
-        }
-
-        const usage = await axios.request({
-            method: 'get',
-            maxBodyLength: Infinity,
-            url: 'http://localhost:4002/usage/' + userID,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).catch((err) => {
-            console.log(err.message);
-        })
-
-        if (usage && parseInt(usage.usedBandwidth) + parseInt(file.size) > parseInt(usage.totalBandwidth)) {
-            return res.status(400).json({ message: "Not enough bandwidth." });
-        }
-
-        userStorage.usedStorage += Number(file.size);
+        userStorage.usedStorage += Number(bandwidth);
         await userStorage.save();
 
-        next();
+        res.status(200).json({ message: "User storage updated on Image Upload." });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error." });
@@ -106,9 +83,8 @@ const updateUserStorageOnDeletion = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Internal server error." });
     }
-
 }
 
 module.exports = {
-    getUserStorageById, updateUserStorageOnUpload, createUser, updateUserStorageOnDeletion
+    getUserStorageById, updateUserStorageOnUpload, createUserStorage, updateUserStorageOnDeletion
 };

@@ -6,75 +6,27 @@ const cors = require("cors");
 const axios = require("axios");
 const cron = require('node-cron');
 const db = require("mongoose");
-const {
-  getDailyUsageById,
-  addNewDailyUsageInstance,
-  resetDailyLimit,
-  updateDailyUsage
-} = require("./controllers/DailyUsageController");
-
-const { addUsageRequest } = require("./controllers/UsageRequestController");
-
+const { usageRouter } = require("./routes/usageRouter");
+const { usageRequestRouter } = require("./routes/usageRequestRouter");
+const { eventRouter } = require("./routes/eventRouter");
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+app.use("/api/usageMntr/usage", usageRequestRouter);
+app.use("/api/usageMntr/events", eventRouter);
+app.use('/api/usageMntr', usageRouter);
 
-app.get("/usage/:id", getDailyUsageById);
-app.post("/createUser", addNewDailyUsageInstance);
-app.post("/resetDailyLimit", resetDailyLimit);
-app.post("/updateUsage", updateDailyUsage, addUsageRequest);
-
-
+// Reset daily limit at midnight
 cron.schedule('0 0 * * *', async () => {
   console.log("UsageMntrServ: Resetting daily limit...");
-  await axios.post("http://localhost:4002/resetDailyLimit").catch((err) => {
+  await axios.post("http://localhost:4002/api/usageMntr/resetDailyLimit").catch((err) => {
     console.log(err.message);
   });
 });
 
-
-app.post("/events", async (req, res) => {
-  const { type } = req.body;
-
-  console.log("UsageMntrServ: Received Event:", type);
-
-  if (type === "NewUserCreated") {
-    console.log("UsageMntrServ: Creating user...")
-
-    axios.request({
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'http://localhost:4002/createUser',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: req.body
-    }).catch((err) => {
-      console.log(err.message);
-    });
-  }
-  if (type === "ImageUploaded") {
-    console.log("UsageMntrServ: Updating usage...")
-
-    await axios.request({
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'http://localhost:4002/updateUsage',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: req.body
-    }).catch((err) => {
-      console.log(err.message);
-    });
-  }
-
-  res.send({});
-});
-
-
+// Connect to the Database
 db.connect(process.env.MONGO_URI)
   .then((result) => {
     console.log("Connected to the Database...");
