@@ -3,16 +3,19 @@ const storageRouter = express.Router();
 const axios = require("axios");
 const fileUpload = require("express-fileupload");
 
-const { updateUserStorageOnUpload, createUserStorage, updateUserStorageOnDeletion } = require("../controllers/UserStorageController");
-const { uploadImage, getImages, deleteImage } = require("../controllers/ImageController");
+const {
+    getUserStorageById,
+    updateUserStorageOnUpload,
+    createUserStorage,
+    updateUserStorageOnDeletion
+} = require("../controllers/UserStorageController");
+const { uploadImage } = require("../controllers/ImageController");
 
 storageRouter.use(fileUpload());
+storageRouter.use("/:userID", getUserStorageById);
 storageRouter.post("/upload", updateUserStorageOnUpload, uploadImage);
 storageRouter.post("/createUserStorage", createUserStorage);
-storageRouter.get("/user/:id/images", getImages);
-storageRouter.delete("/images/:id", deleteImage);
 storageRouter.post("/updateUserStorageOnDeletion", updateUserStorageOnDeletion);
-
 
 // Endpoint to handle storage usage alert
 storageRouter.post("/usageAlert", async (req, res) => {
@@ -43,47 +46,6 @@ storageRouter.post("/usageAlert", async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Internal server error." });
     }
-});
-
-
-storageRouter.post("/events", async (req, res) => {
-    const { type } = req.body;
-
-    console.log("StorageMgmtServ: Received Event:", type);
-
-    if (type === "NewUserCreated") {
-        console.log("StorageMgmtServ: Creating user...")
-
-        await axios.request({
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: 'http://localhost:4001/api/storageMgmt/createUserStorage',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: req.body
-        }).catch((err) => {
-            console.log(err.message);
-        });
-
-    }
-    if (type === "ImageDeleted") {
-        console.log("StorageMgmtServ: Deleting image...")
-
-        await axios.request({
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: 'http://localhost:4001/api/storageMgmt/updateUserStorageOnDeletion',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: req.body
-        }).catch((err) => {
-            console.log(err.message);
-        });
-    }
-
-    res.send({});
 });
 
 module.exports = { storageRouter };

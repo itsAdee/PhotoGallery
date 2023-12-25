@@ -77,8 +77,9 @@ const uploadImage = async (req, res) => {
 }
 
 const getImages = async (req, res) => {
+    const { userID } = req.params;
     try {
-        const images = await Image.find({ userID: req.params.id });
+        const images = await Image.find({ userID });
 
         if (!images) {
             return res.status(404).json({ message: `Images not found.` });
@@ -108,9 +109,9 @@ const getImages = async (req, res) => {
 }
 
 const deleteImage = async (req, res) => {
+    const { id, userID } = req.params;
     try {
-        const image = await Image.findById(req.params.id);
-        const userID = image.userID;
+        const image = await Image.find({ _id: id, userID });
         const file = { name: image.imageName, size: image.imageSize };
 
         if (!image) {
@@ -143,8 +144,28 @@ const deleteImage = async (req, res) => {
     }
 }
 
+const renameImage = async (req, res) => {
+    const { id, userID } = req.params;
+    const { imageName } = req.body;
+    try {
+        const image = await Image.find({ _id: id, userID });
+
+        if (!image) {
+            return res.status(404).json({ message: "Image not found." });
+        }
+
+        await image.updateOne({ imageName });
+
+        res.status(200).json({ message: "Image renamed." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+}
+
 module.exports = {
     uploadImage,
     getImages,
-    deleteImage
+    deleteImage,
+    renameImage
 };

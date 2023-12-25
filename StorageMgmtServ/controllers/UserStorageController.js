@@ -28,7 +28,7 @@ const createUserStorage = async (req, res) => {
 }
 
 const getUserStorageById = async (req, res) => {
-    const { userID } = req;
+    const { userID } = req.params;
 
     try {
         const userStorage = await UserStorage.findOne({ userID });
