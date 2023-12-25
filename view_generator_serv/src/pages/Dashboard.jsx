@@ -92,6 +92,7 @@ const Dashboard = () => {
         id={image._id}
         imageUri={image.imageUri}
         imageName={image.imageName}
+        imageType={image.imageType}
         onDelete={handleDelete}
         onRename={handleRename}
         onOpenImage={handleOpenImage}
@@ -131,8 +132,21 @@ const Dashboard = () => {
           </Select>
         </Box>
 
-        <SimpleGrid columns={viewType === 'list' ? 1 : viewType === 'detailedList' ? 2 : 3} spacing={4} mt={4}>
-          {renderImageCards()}
+        <SimpleGrid columns={viewType === 'list' ? 1 : viewType === 'detailedList' ? 1 : 3} spacing={4} mt={4}>
+          {viewType === 'detailedList'
+            ? images.map((image) => (
+                <ImageCard
+                  key={image._id}
+                  id={image._id}
+                  imageUri={image.imageUri}
+                  imageName={image.imageName}
+                  imageType={image.imageType}
+                  onDelete={handleDelete}
+                  onRename={handleRename}
+                  onOpenImage={handleOpenImage}
+                />
+              ))
+            : renderImageCards()}
         </SimpleGrid>
       </Box>
     </Box>
