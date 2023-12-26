@@ -12,23 +12,28 @@ import {
   SimpleGrid,
   Text,
   Select,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
 import ImageCard from '../components/ImageCard';
 
-const Dashboard = () => {
+const Dashboard = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [images, setImages] = useState([]);
-  const [viewType, setViewType] = useState('large'); // Default view type
+  const [viewType, setViewType] = useState('large');
+  const [error, setError] = useState(null);
+
   const { user } = useAuthContext();
 
   useEffect(() => {
     // Fetch images from the server
     async function fetchImages() {
       try {
-        const response = await axios.get(`http://localhost:4001/images/${user._id}`);
+        const response = await axios.get(`http://localhost:4001/api/storageMgmt/images/user/${user._id}`);
         setImages(response.data);
       } catch (error) {
         console.error(error);
+        setError(error.response.data.message);
       }
     }
     fetchImages();
@@ -46,28 +51,32 @@ const Dashboard = () => {
       formData.append('userID', user._id);
 
       try {
-        const response = await axios.post('http://localhost:4001/upload', formData);
+        const response = await axios.post('http://localhost:4001/api/storageMgmt/images/upload', formData);
         console.log(response.data);
 
         if (response.status === 200) {
           setImages((prevImages) => [...prevImages, response.data]);
+          props.setUsedStorage(props.usedStorage + response.data.imageSize);
         }
       } catch (error) {
         console.error(error);
+        setError(error.response.data.message);
       }
     }
   };
 
   const handleDelete = async (imageId) => {
     try {
-      const response = await axios.delete(`http://localhost:4001/images/${imageId}`);
+      const response = await axios.delete(`http://localhost:4001/api/storageMgmt/images/${imageId}/user/${user._id}`);
 
       if (response.status === 200) {
         console.log(response.data);
         setImages((prevImages) => prevImages.filter((image) => image._id !== imageId));
+        props.setUsedStorage(props.usedStorage - response.data.imageSize);
       }
     } catch (error) {
       console.error(error);
+      setError(error.response.data.message);
     }
   };
 
@@ -102,6 +111,13 @@ const Dashboard = () => {
 
   return (
     <Box>
+      {error && (
+          <Alert status="error">
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
+        
       <Heading as="h1" mb={4}>
         Dashboard
       </Heading>
@@ -135,17 +151,17 @@ const Dashboard = () => {
         <SimpleGrid columns={viewType === 'list' ? 1 : viewType === 'detailedList' ? 1 : 3} spacing={4} mt={4}>
           {viewType === 'detailedList'
             ? images.map((image) => (
-                <ImageCard
-                  key={image._id}
-                  id={image._id}
-                  imageUri={image.imageUri}
-                  imageName={image.imageName}
-                  imageType={image.imageType}
-                  onDelete={handleDelete}
-                  onRename={handleRename}
-                  onOpenImage={handleOpenImage}
-                />
-              ))
+              <ImageCard
+                key={image._id}
+                id={image._id}
+                imageUri={image.imageUri}
+                imageName={image.imageName}
+                imageType={image.imageType}
+                onDelete={handleDelete}
+                onRename={handleRename}
+                onOpenImage={handleOpenImage}
+              />
+            ))
             : renderImageCards()}
         </SimpleGrid>
       </Box>

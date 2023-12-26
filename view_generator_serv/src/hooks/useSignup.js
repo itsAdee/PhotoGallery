@@ -19,30 +19,36 @@ export const useSignup = () => {
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
+    formData.append('confirmPassword', confirmPassword);
     formData.append('email', email);
 
-    
-  
-    axios.post('http://localhost:4003/register', formData)
+
+
+    axios.post('http://localhost:4003/api/userAcc/register', formData)
       .then(async (response) => {
         console.log(response.data);
-        
+
         if (!response.status === 201) {
           setIsLoading(false);
           setError(response.data.error);
         }
         if (response.status === 201) {
-          // save the user to local storage
           localStorage.setItem('user', JSON.stringify(response.data));
 
-          // update the authContext
           dispatch({ type: 'LOGIN', payload: response.data });
           setIsLoading(false);
           setError(false);
         }
       })
       .catch((error) => {
-        console.error(error);
+        setIsLoading(false);
+        if (error.response) {
+          setError(error.response.data.message);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          setError(error.message);
+        }
       });
   };
 

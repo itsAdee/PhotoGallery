@@ -8,8 +8,10 @@ const uploadImage = async (req, res) => {
     console.log("Upload Image Successfully Called")
     const { userID } = req.body;
     const file = req.files.file;
-    console.log(file);
-    console.log(userID);
+
+    if (!file) {
+        return res.status(400).json({ message: "No file uploaded." });
+    }
 
     const storage = await axios.request({
         method: 'get',
@@ -22,15 +24,14 @@ const uploadImage = async (req, res) => {
         console.log(err.message);
     })
 
-    console.log(storage);
-    if (!storage || parseInt(storage.usedStorage) + parseInt(file.size) > parseInt(storage.totalStorage)) {
+    if (storage.data && parseInt(storage.data.usedStorage) + parseInt(file.size) > parseInt(storage.data.totalStorage)) {
         return res.status(400).json({ message: "Not enough storage." });
     }
 
     const usage = await axios.request({
         method: 'get',
         maxBodyLength: Infinity,
-        url: 'http://localhost:4002/api/usageMntr/usage/' + userID,
+        url: 'http://localhost:4002/api/usageMntr/usage/user/' + userID,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -38,7 +39,8 @@ const uploadImage = async (req, res) => {
         console.log(err.message);
     })
 
-    if (usage && parseInt(usage.usedBandwidth) + parseInt(file.size) > parseInt(usage.totalBandwidth)) {
+    console.log(usage.data);
+    if (usage.data && parseInt(usage.data.usedBandwidth) + parseInt(file.size) > parseInt(usage.data.totalBandwidth)) {
         return res.status(400).json({ message: "Not enough bandwidth." });
     }
 
@@ -146,14 +148,14 @@ const getImages = async (req, res) => {
 const deleteImage = async (req, res) => {
     const { id, userID } = req.params;
     try {
-        const image = await Image.find({ _id: id, userID });
-        const file = { name: image.imageName, size: image.imageSize };
+        const image = await Image.findOne({ _id: id, userID });
+        console.log(image);
 
         if (!image) {
             return res.status(404).json({ message: "Image not found." });
         }
 
-        await image.deleteOne({ _id: req.params.id });
+        await Image.deleteOne({ _id: req.params.id });
 
         await axios.request({
             method: 'post',
@@ -165,14 +167,14 @@ const deleteImage = async (req, res) => {
             data: {
                 type: "ImageDeleted",
                 userID: userID,
-                imageName: file.name,
-                imageSize: file.size,
+                imageName: image.imageName,
+                imageSize: image.imageSize,
             }
         }).catch((err) => {
             console.log(err.message);
         });
 
-        res.status(200).json({ message: "Image deleted." });
+        res.status(200).json(image);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error." });

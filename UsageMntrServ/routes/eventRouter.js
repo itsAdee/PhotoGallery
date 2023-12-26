@@ -1,7 +1,8 @@
 const express = require('express');
 const eventRouter = express.Router();
+const axios = require("axios");
 
-eventRouter.post("/events", async (req, res) => {
+eventRouter.post("/", async (req, res) => {
     const { type } = req.body;
 
     console.log("UsageMntrServ: Received Event:", type);

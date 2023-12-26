@@ -15,7 +15,7 @@ export const useLogin = () => {
     formData.append('username', username);
     formData.append('password', password);
 
-    axios.post('http://localhost:4003/login', formData)
+    axios.post('http://localhost:4003/api/userAcc/login', formData)
       .then(response => {
         console.log(response.data);
 
@@ -24,10 +24,8 @@ export const useLogin = () => {
           setError(response.data.error);
         }
         if (response.status === 200) {
-          // save the user to local storage
           localStorage.setItem('user', JSON.stringify(response.data));
 
-          // update the authContext
           dispatch({ type: 'LOGIN', payload: response.data });
           setIsLoading(false);
           setError(false);
@@ -35,7 +33,14 @@ export const useLogin = () => {
 
       })
       .catch((error) => {
-        console.error(error);
+        setIsLoading(false);
+        if (error.response) {
+          setError(error.response.data.message);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          setError(error.message);
+        }
       });
   };
 

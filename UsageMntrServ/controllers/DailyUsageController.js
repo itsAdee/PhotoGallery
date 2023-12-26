@@ -12,7 +12,7 @@ const getDailyUsageById = async (req, res) => {
             return res.status(404).json({ message: "Daily usage not found." });
         }
 
-        res.status(200).json({ dailyUsage });
+        res.status(200).json(dailyUsage);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error." });
@@ -33,7 +33,7 @@ const addNewDailyUsageInstance = async (req, res) => {
         const newDailyUsage = new DailyUsage({
             userID,
             usedBandwidth: 0,
-            totalBandwidth: 2500000
+            totalBandwidth: 25000000
         });
 
         await newDailyUsage.save();

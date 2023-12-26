@@ -13,7 +13,7 @@ const createUserStorage = async (req, res) => {
 
         const newUserStorage = new UserStorage({
             userID,
-            totalStorage: 1000000,
+            totalStorage: 10000000,
             usedStorage: 0
         });
 
@@ -75,7 +75,7 @@ const updateUserStorageOnDeletion = async (req, res) => {
             return res.status(404).json({ message: "User not found." });
         }
 
-        userStorage.usedStorage -= Number(imageSize);
+        userStorage.usedStorage = Math.max(0, userStorage.usedStorage - Number(imageSize));
         await userStorage.save();
 
         res.status(200).json({ message: "User storage updated on Image Deletion." });

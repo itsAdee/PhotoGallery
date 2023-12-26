@@ -15,9 +15,9 @@ const Signup = () => {
   };
 
   return (
-    <Center>
+    <Center minHeight="100vh">
       <Flex bg="gray.50">
-        <Box as="form" className="signup" onSubmit={handleSubmit} p={5} shadow="md" borderWidth={1}>
+        <Box as="form" className="signup" onSubmit={handleSubmit} p={5} shadow="md" borderWidth={1} width="400px">
           <Center>
             <Text fontSize="xl" mb={5}>Sign Up</Text>
           </Center>
@@ -38,9 +38,9 @@ const Signup = () => {
             <Input type="password" onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword} />
           </FormControl>
           <Button colorScheme="blue" isLoading={isLoading} type="submit" mt={4} w='100%'>Sign Up</Button>
-          {error && <Text color="red.500" mt={3}>{error}</Text>}
+          {error && <Text color="red.500" mt={3} wordBreak="break-word">{error}</Text>}
           <Flex mt={4}>
-            <Stack direction='row' spacing={3}>
+            <Stack direction='row' w="full" spacing={3} justifyContent='space-between' alignItems="center">
               <Text mr={1} fontSize='md'>Already have an account?</Text>
               <Link href="/login">
                 <Button colorScheme="teal" variant='outline'>Log In</Button>

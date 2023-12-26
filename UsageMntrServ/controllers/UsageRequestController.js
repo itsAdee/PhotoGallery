@@ -20,6 +20,33 @@ const addUsageRequest = async (req, res) => {
     }
 }
 
+const getUsageRequestsToday = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+  
+      // Get today's date at 00:00:00
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+  
+      // Get today's date at 23:59:59
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999);
+  
+      // Find usage requests that were created between the start of today and the end of today
+      const usageRequests = await UsageRequest.find({
+        userId: userId,
+        createdAt: {
+          $gte: startOfToday,
+          $lt: endOfToday
+        }
+      });
+  
+      res.json(usageRequests);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+
 const getUsageRequestsByDay = async (req, res) => {
     const userID = new mongoose.Types.ObjectId(req.params.userID);
 
@@ -124,6 +151,7 @@ const getUsageRequestsByYear = async (req, res) => {
 
 module.exports = {
     addUsageRequest,
+    getUsageRequestsToday,
     getUsageRequestsByDay,
     getUsageRequestsByMonth,
     getUsageRequestsByYear

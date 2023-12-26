@@ -3,17 +3,12 @@ const User = require('../models/user');
 const axios = require('axios');
 
 const CreateUser = async (req, res) => {
-  const { username, password, confirmpassword, email } = req.body;
+  const { username, password, confirmPassword, email } = req.body;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  const user = await User.findOne({ $or: [{ username }, { email }] });
-  if (user) {
-    console.log(`User ${username} or email ${email} already exists.`);
-    res.status(400).send({ message: `User ${username} or email ${email} already exists.` });
-    return;
-  }
+  console.log(req.body);
 
-  if (!username || !password || !confirmpassword || !email) {
+  if (!username || !password || !confirmPassword || !email) {
     console.log(`Username, password, email, or confirm password not provided.`);
     res.status(400).send({ message: `Username, password, email, or confirm password not provided.` });
     return;
@@ -21,9 +16,16 @@ const CreateUser = async (req, res) => {
     console.log(`Password does not meet the requirements.`);
     res.status(400).send({ message: `Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long.` });
     return;
-  } else if (password !== confirmpassword) {
+  } else if (password !== confirmPassword) {
     console.log(`Passwords do not match.`);
     res.status(400).send({ message: `Passwords do not match.` });
+    return;
+  }
+
+  const user = await User.findOne({ $or: [{ username }, { email }] });
+  if (user) {
+    console.log(`User ${username} or email ${email} already exists.`);
+    res.status(400).send({ message: `User ${username} or email ${email} already exists.` });
     return;
   }
 
