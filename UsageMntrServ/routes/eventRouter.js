@@ -13,7 +13,7 @@ eventRouter.post("/", async (req, res) => {
         axios.request({
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4002/api/usageMntr/createUser',
+            url: 'http://usage-mntr-serv-srv:4002/api/usageMntr/createUser',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -28,7 +28,7 @@ eventRouter.post("/", async (req, res) => {
         await axios.request({
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4002/api/usageMntr/updateUsage',
+            url: 'http://usage-mntr-serv-srv:4002/api/usageMntr/updateUsage',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -43,7 +43,7 @@ eventRouter.post("/", async (req, res) => {
         await axios.request({
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4002/api/usageMntr/updateUsage',
+            url: 'http://usage-mntr-serv-srv:4002/api/usageMntr/updateUsage',
             headers: {
                 'Content-Type': 'application/json'
             },

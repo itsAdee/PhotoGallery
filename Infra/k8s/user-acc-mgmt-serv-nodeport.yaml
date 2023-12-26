@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Service
-metadata: name:user-acc-mgmt-serv-nodeport-srv
+metadata: 
+  name: user-acc-mgmt-serv-nodeport-srv
 spec:
   type: NodePort
   selector:

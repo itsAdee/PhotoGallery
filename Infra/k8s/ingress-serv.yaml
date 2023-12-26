@@ -1,0 +1,103 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: photogallery.com
+    http:
+      paths:
+      - path: /api/eventbus/events
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: event-bus-srv
+            port:
+              number: 4000
+      - path: /events
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: event-bus-srv
+            port:
+              number: 4000
+      - path: /api/storageMgmt/images
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: storage-mgmt-serv-srv
+            port:
+              number: 4001
+      - path: /api/storageMgmt/storage
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: storage-mgmt-serv-srv
+            port:
+              number: 4001
+      - path: /api/storageMgmt/events
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: storage-mgmt-serv-srv
+            port:
+              number: 4001
+      - path: /api/usageMntr/usage
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: usage-mntr-serv-srv
+            port:
+              number: 4002
+      - path: /api/usageMntr/events
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: usage-mntr-serv-srv
+            port:
+              number: 4002
+      - path: /api/usageMntr
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: usage-mntr-serv-srv
+            port:
+              number: 4002
+      - path: /api/userAcc
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: user-acc-mgmt-serv-srv
+            port:
+              number: 4003
+      - path: /?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: view-generator-serv-srv
+            port:
+              number: 3000
+      - path: /api/userAcc/?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: user-acc-mgmt-serv-srv
+            port:
+              number: 4003
+      - path: /api/usageMntr/?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: usage-mntr-serv-srv
+            port:
+              number: 4002
+      - path: /api/storageMgmt/?(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: storage-mgmt-serv-srv
+            port:
+              number: 4001
