@@ -113,6 +113,46 @@ const uploadImage = async (req, res) => {
     }
 }
 
+const downloadImage = async (req, res) => {
+    const { id, userID } = req.params;
+    try {
+        const image = await Image.findById(id);
+
+        if (!image) {
+            return res.status(404).json({ message: "Image not found." });
+        }
+
+        const usage = await axios.request({
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: 'http://localhost:4002/api/usageMntr/usage/user/' + userID,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).catch((err) => {
+            console.log(err.message);
+        })
+
+        if (usage.data && parseInt(usage.data.usedBandwidth) + parseInt(image.imageSize) > parseInt(usage.data.totalBandwidth)) {
+            return res.status(400).json({ message: "Not enough bandwidth." });
+        }
+
+        // Convert base64 to buffer
+        const buffer = Buffer.from(image.img, 'base64');
+
+        // Set the content type and disposition (attachment to prompt download)
+        res.setHeader('Content-Type', image.contentType);
+        res.setHeader('Access-Control-Expose-Headers', 'content-disposition');
+        res.setHeader('Content-Disposition', 'filename=' + image.imageName);
+
+        // Send the file
+        res.send(buffer);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+}
+
 const getImages = async (req, res) => {
     const { userID } = req.params;
     try {
@@ -204,5 +244,6 @@ module.exports = {
     uploadImage,
     getImages,
     deleteImage,
-    renameImage
+    renameImage,
+    downloadImage
 };

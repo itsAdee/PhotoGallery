@@ -37,6 +37,21 @@ eventRouter.post("/", async (req, res) => {
             console.log(err.message);
         });
     }
+    if (type === "ImageDownloaded") {
+        console.log("UsageMntrServ: Updating usage...")
+
+        await axios.request({
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'http://localhost:4002/api/usageMntr/updateUsage',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: req.body
+        }).catch((err) => {
+            console.log(err.message);
+        });
+    }
     res.send({});
 });
 

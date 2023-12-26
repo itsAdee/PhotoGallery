@@ -90,6 +90,54 @@ const Dashboard = (props) => {
     console.log(`Opening image ${imageId}`);
   };
 
+  const handleDownload = async (imageId) => {
+    try {
+      const response = await axios.get(`http://localhost:4001/api/storageMgmt/images/download/${imageId}/user/${user._id}`, {
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+      const link = document.createElement('a');
+      link.href = url;
+
+      const contentDisposition = response.headers['content-disposition'];
+      let fileName = 'downloaded_image';
+      if (contentDisposition) {
+        const fileNameMatch = contentDisposition.match(/filename=(.*)/);
+        if (fileNameMatch && fileNameMatch.length === 2)
+          fileName = fileNameMatch[1];
+      }
+
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+
+      try {
+        await axios.request({
+          method: 'post',
+          url: `http://localhost:4000/api/eventbus/events`,
+          data: {
+            type: 'ImageDownloaded',
+            bandwidth: response.headers['content-length'],
+            userID: user._id,
+            requestType: 'Download',
+
+          },
+        })
+      }
+      catch (error) {
+        console.error(error);
+        setError(error.response ? error.response.data.message : 'Download failed');
+      }
+
+
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error(error);
+      setError(error.response ? error.response.data.message : 'Download failed');
+    }
+  };
+
   const handleViewTypeChange = (event) => {
     setViewType(event.target.value);
   };
@@ -105,6 +153,7 @@ const Dashboard = (props) => {
         onDelete={handleDelete}
         onRename={handleRename}
         onOpenImage={handleOpenImage}
+        onDownload={handleDownload}
       />
     ));
   };
@@ -112,12 +161,12 @@ const Dashboard = (props) => {
   return (
     <Box>
       {error && (
-          <Alert status="error">
-            <AlertIcon />
-            {error}
-          </Alert>
-        )}
-        
+        <Alert status="error">
+          <AlertIcon />
+          {error}
+        </Alert>
+      )}
+
       <Heading as="h1" mb={4}>
         Dashboard
       </Heading>

@@ -23,6 +23,10 @@ function ImageCard(props) {
     props.onOpenImage(props.id);
   };
 
+  const handleDownload = () => {
+    props.onDownload(props.id);
+  };
+
   return (
     <Box
       className="image-container"
@@ -67,6 +71,10 @@ function ImageCard(props) {
           </Button>
         </>
       )}
+
+      <Button onClick={handleDownload}>
+        Download
+      </Button>
     </Box>
   );
 }

@@ -60,15 +60,17 @@ const resetDailyLimit = async (req, res) => {
 
 const updateDailyUsage = async (req, res, next) => {
     const { userID, bandwidth } = req.body;
+    console.log(userID);
 
     try {
         const dailyUsage = await DailyUsage.findOne({ userID });
 
         if (!dailyUsage) {
+            console.log("Daily usage not found.");
             return res.status(404).json({ message: "Daily usage not found." });
         }
 
-        dailyUsage.usedBandwidth += bandwidth;
+        dailyUsage.usedBandwidth += Number(bandwidth);
         await dailyUsage.save();
 
         next();

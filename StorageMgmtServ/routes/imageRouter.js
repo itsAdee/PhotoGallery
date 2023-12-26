@@ -4,12 +4,14 @@ const {
     getImages,
     deleteImage,
     renameImage,
-    uploadImage
+    uploadImage,
+    downloadImage
 } = require("../controllers/ImageController");
 const fileUpload = require("express-fileupload");
 
 imageRouter.use(fileUpload());
 
+imageRouter.get("/download/:id/user/:userID", downloadImage)
 imageRouter.post("/upload", uploadImage);
 imageRouter.get("/user/:userID", getImages);
 imageRouter.put("rename/:id/user/:userID", renameImage);
