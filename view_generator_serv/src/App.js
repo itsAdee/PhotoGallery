@@ -4,6 +4,7 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import { useAuthContext } from "./hooks/useAuthContext";
 import Navbar from './components/Navbar';
+import Usage from "./pages/Usage";
 
 function App() {
 
@@ -15,9 +16,11 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
+          {/* <Route path='/' element={<Dashboard/>} /> */}
           <Route path='/' element={user ? <Dashboard /> : <Navigate to='/login' />} />
           <Route path='/login' element={!user ? <Login /> : <Navigate to='/' />} />
           <Route path='/signup' element={!user ? <Signup /> : <Navigate to='/' />} />
+          <Route path='/usage' element={<Usage />} />
         </Routes>
       </BrowserRouter>
     </div>
