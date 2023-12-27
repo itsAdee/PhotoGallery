@@ -81,13 +81,30 @@ const Dashboard = (props) => {
   };
 
   const handleRename = (imageId, newName) => {
-    // Add the logic to send a request to the backend to rename the image
-    console.log(`Renaming image ${imageId} to ${newName}`);
-  };
+    try {
+      const response = axios.request({
+        method: 'put',
+        url: `http://localhost:4001/api/storageMgmt/images/rename/${imageId}/user/${user._id}`,
+        data: {
+          imageName: newName,
+        }
+      });
 
-  const handleOpenImage = (imageId) => {
-    // Add the logic to open the image in a modal or a new page
-    console.log(`Opening image ${imageId}`);
+      if (response.status === 200) {
+        console.log(response.data);
+        setImages((prevImages) =>
+          prevImages.map((image) => {
+            if (image._id === imageId) {
+              return { ...image, imageName: newName };
+            }
+            return image;
+          })
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      setError(error.response ? error.response.data.message : 'Rename failed');
+    }
   };
 
   const handleDownload = async (imageId) => {
@@ -150,9 +167,9 @@ const Dashboard = (props) => {
         imageUri={image.imageUri}
         imageName={image.imageName}
         imageType={image.imageType}
+        imageSize={image.imageSize}
         onDelete={handleDelete}
         onRename={handleRename}
-        onOpenImage={handleOpenImage}
         onDownload={handleDownload}
       />
     ));
@@ -208,7 +225,6 @@ const Dashboard = (props) => {
                 imageType={image.imageType}
                 onDelete={handleDelete}
                 onRename={handleRename}
-                onOpenImage={handleOpenImage}
               />
             ))
             : renderImageCards()}

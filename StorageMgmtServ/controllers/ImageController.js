@@ -13,6 +13,11 @@ const uploadImage = async (req, res) => {
         return res.status(400).json({ message: "No file uploaded." });
     }
 
+    const image = await Image.findOne({ userID, imageName: file.name });
+    if (image) {
+        return res.status(400).json({ message: "Image already exists." });
+    }
+
     const storage = await axios.request({
         method: 'get',
         maxBodyLength: Infinity,
@@ -231,7 +236,7 @@ const renameImage = async (req, res) => {
             return res.status(404).json({ message: "Image not found." });
         }
 
-        await image.updateOne({ imageName });
+        await Image.updateOne({ imageName });
 
         res.status(200).json({ message: "Image renamed." });
     } catch (error) {
