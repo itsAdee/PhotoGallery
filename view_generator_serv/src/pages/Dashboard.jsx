@@ -84,7 +84,7 @@ const Dashboard = (props) => {
     try {
       const response = axios.request({
         method: 'put',
-        url: `http://localhost:4001/api/storageMgmt/images/rename/${imageId}/user/${user._id}`,
+        url: `http://photogallerydocker.com/api/storageMgmt/images/rename/${imageId}/user/${user._id}`,
         data: {
           imageName: newName,
         }
