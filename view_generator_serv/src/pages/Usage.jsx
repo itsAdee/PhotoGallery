@@ -30,7 +30,7 @@ const Usage = () => {
     else if (filterOption === "yearly") { type = "year"; }
 
     try {
-      const response = await axios.get(`http://photogallery.com/api/usageMntr/usage/user/${user._id}/${type}`);
+      const response = await axios.get(`http://photogallerydocker.com/api/usageMntr/usage/user/${user._id}/${type}`);
       console.log(response.data);
       setUsageData(response.data);
     } catch (error) {
@@ -100,7 +100,7 @@ const Usage = () => {
     setDisabled(true);
 
     try {
-      const response = await axios.get(`http://photogallery.com/api/usageMntr/usage/user/${user._id}/today`);
+      const response = await axios.get(`http://photogallerydocker.com/api/usageMntr/usage/user/${user._id}/today`);
       setRequestUsageData(response.data);
     } catch (error) {
       console.error(error);

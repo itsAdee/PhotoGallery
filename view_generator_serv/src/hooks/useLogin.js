@@ -15,7 +15,7 @@ export const useLogin = () => {
     formData.append('username', username);
     formData.append('password', password);
 
-    axios.post('http://photogallery.com/api/userAcc/login', formData)
+    axios.post('http://photogallerydocker.com/api/userAcc/login', formData)
       .then(response => {
         console.log(response.data);
 

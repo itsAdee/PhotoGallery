@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: user-acc-mgmt-serv
-          image: us.gcr.io/photogallery-409112/useraccmgmtserv
+          image: wasifmehmood/user-acc
 ---
 apiVersion: v1
 kind: Service

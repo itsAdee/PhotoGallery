@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: usage-mntr-serv
-          image: us.gcr.io/photogallery-409112/usagemntrserv
+          image: wasifmehmood/usage-mnt
 ---
 apiVersion: v1
 kind: Service

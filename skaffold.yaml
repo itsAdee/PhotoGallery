@@ -7,12 +7,10 @@ deploy:
 metadata:
   name: photogallery
 build:
-  # local:
-  #   push: false
-  googleCloudBuild:
-    projectId: photogallery-409112
+  local:
+    push: false
   artifacts:
-    - image: us.gcr.io/photogallery-409112/eventbus
+    - image: wasifmehmood/eve-bus
       context: EventBus
       docker:
         dockerfile: Dockerfile
@@ -20,7 +18,7 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
-    - image: us.gcr.io/photogallery-409112/storagemgmtserv
+    - image: wasifmehmood/str-mgt
       context: StorageMgmtServ
       docker:
         dockerfile: Dockerfile
@@ -28,7 +26,7 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
-    - image: us.gcr.io/photogallery-409112/usagemntrserv
+    - image: wasifmehmood/usage-mnt
       context: UsageMntrServ
       docker:
         dockerfile: Dockerfile
@@ -36,7 +34,7 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
-    - image: us.gcr.io/photogallery-409112/useraccmgmtserv
+    - image: wasifmehmood/user-acc
       context: UserAccMgmtServ
       docker:
         dockerfile: Dockerfile
@@ -44,7 +42,7 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
-    - image: us.gcr.io/photogallery-409112/view_generator_serv
+    - image: wasifmehmood/view-gen
       context: view_generator_serv
       docker:
         dockerfile: Dockerfile

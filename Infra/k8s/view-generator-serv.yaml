@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: view-generator-serv
-          image: us.gcr.io/photogallery-409112/view_generator_serv 
+          image: wasifmehmood/view-gen
 ---
 apiVersion: v1
 kind: Service
