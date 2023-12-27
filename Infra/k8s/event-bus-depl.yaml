@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: event-bus
-          image: nightwalker7558/event-bus
+          image: us.gcr.io/photogalleryapp-408816/event-bus
 ---
 apiVersion: v1
 kind: Service

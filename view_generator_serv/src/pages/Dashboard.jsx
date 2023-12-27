@@ -29,7 +29,7 @@ const Dashboard = (props) => {
     // Fetch images from the server
     async function fetchImages() {
       try {
-        const response = await axios.get(`http://photogallerydocker.com/api/storageMgmt/images/user/${user._id}`);
+        const response = await axios.get(`http://photogallery.com/api/storageMgmt/images/user/${user._id}`);
         setImages(response.data);
       } catch (error) {
         console.error(error);
@@ -51,7 +51,7 @@ const Dashboard = (props) => {
       formData.append('userID', user._id);
 
       try {
-        const response = await axios.post('http://photogallerydocker.com/api/storageMgmt/images/upload', formData);
+        const response = await axios.post('http://photogalleryd.com/api/storageMgmt/images/upload', formData);
         console.log(response.data);
 
         if (response.status === 200) {
@@ -67,7 +67,7 @@ const Dashboard = (props) => {
 
   const handleDelete = async (imageId) => {
     try {
-      const response = await axios.delete(`http://photogallerydocker.com/api/storageMgmt/images/${imageId}/user/${user._id}`);
+      const response = await axios.delete(`http://photogallery.com/api/storageMgmt/images/${imageId}/user/${user._id}`);
 
       if (response.status === 200) {
         console.log(response.data);
@@ -84,7 +84,7 @@ const Dashboard = (props) => {
     try {
       const response = axios.request({
         method: 'put',
-        url: `http://photogallerydocker.com/api/storageMgmt/images/rename/${imageId}/user/${user._id}`,
+        url: `http://photogallery.com/api/storageMgmt/images/rename/${imageId}/user/${user._id}`,
         data: {
           imageName: newName,
         }
@@ -109,7 +109,7 @@ const Dashboard = (props) => {
 
   const handleDownload = async (imageId) => {
     try {
-      const response = await axios.get(`http://photogallerydocker.com/api/storageMgmt/images/download/${imageId}/user/${user._id}`, {
+      const response = await axios.get(`http://photogallery.com/api/storageMgmt/images/download/${imageId}/user/${user._id}`, {
         responseType: 'blob',
       });
 
@@ -131,7 +131,7 @@ const Dashboard = (props) => {
       try {
         await axios.request({
           method: 'post',
-          url: `http://photogallerydocker.com/api/eventbus/events`,
+          url: `http://photogallery.com/api/eventbus/events`,
           data: {
             type: 'ImageDownloaded',
             bandwidth: response.headers['content-length'],

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: user-acc-mgmt-serv
-          image: nightwalker7558/user-acc
+          image: us.gcr.io/photogalleryapp-408816/user-acc
 ---
 apiVersion: v1
 kind: Service

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: view-generator-serv
-          image: nightwalker7558/view-gen
+          image: us.gcr.io/photogalleryapp-408816/view-gen
 ---
 apiVersion: v1
 kind: Service

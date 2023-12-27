@@ -24,7 +24,7 @@ export const useSignup = () => {
 
 
 
-    axios.post('http://photogallerydocker.com/api/userAcc/register', formData)
+    axios.post('http://photogallery.com/api/userAcc/register', formData)
       .then(async (response) => {
         console.log(response.data);
 
