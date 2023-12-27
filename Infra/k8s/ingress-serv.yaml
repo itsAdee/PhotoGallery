@@ -10,63 +10,28 @@ spec:
   - host: photogallerydocker.com
     http:
       paths:
-      - path: /api/eventbus/events
+      - path: /api/eventbus/?(.*)
         pathType: ImplementationSpecific
         backend:
           service:
             name: event-bus-srv
             port:
               number: 4000
-      - path: /events
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: event-bus-srv
-            port:
-              number: 4000
-      - path: /api/storageMgmt/images
+      - path: /api/storageMgmt/?(.*)
         pathType: ImplementationSpecific
         backend:
           service:
             name: storage-mgmt-serv-srv
             port:
               number: 4001
-      - path: /api/storageMgmt/storage
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: storage-mgmt-serv-srv
-            port:
-              number: 4001
-      - path: /api/storageMgmt/events
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: storage-mgmt-serv-srv
-            port:
-              number: 4001
-      - path: /api/usageMntr/usage
+      - path: /api/usageMntr/?(.*)
         pathType: ImplementationSpecific
         backend:
           service:
             name: usage-mntr-serv-srv
             port:
               number: 4002
-      - path: /api/usageMntr/events
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: usage-mntr-serv-srv
-            port:
-              number: 4002
-      - path: /api/usageMntr
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: usage-mntr-serv-srv
-            port:
-              number: 4002
-      - path: /api/userAcc
+      - path: /api/userAcc/?(.*)
         pathType: ImplementationSpecific
         backend:
           service:
@@ -80,24 +45,3 @@ spec:
             name: view-generator-serv-srv
             port:
               number: 3000
-      - path: /api/userAcc/?(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: user-acc-mgmt-serv-srv
-            port:
-              number: 4003
-      - path: /api/usageMntr/?(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: usage-mntr-serv-srv
-            port:
-              number: 4002
-      - path: /api/storageMgmt/?(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: storage-mgmt-serv-srv
-            port:
-              number: 4001

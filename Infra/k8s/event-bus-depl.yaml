@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: event-bus
-          image: wasifmehmood/eve-bus
+          image: nightwalker7558/event-bus
 ---
 apiVersion: v1
 kind: Service

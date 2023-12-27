@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: user-acc-mgmt-serv
-          image: wasifmehmood/user-acc
+          image: nightwalker7558/user-acc
 ---
 apiVersion: v1
 kind: Service
