@@ -14,7 +14,7 @@ imageRouter.use(fileUpload());
 imageRouter.get("/download/:id/user/:userID", downloadImage)
 imageRouter.post("/upload", uploadImage);
 imageRouter.get("/user/:userID", getImages);
-imageRouter.put("rename/:id/user/:userID", renameImage);
+imageRouter.put("/rename/:id/user/:userID", renameImage);
 imageRouter.delete("/:id/user/:userID", deleteImage);
 
 module.exports = { imageRouter };
