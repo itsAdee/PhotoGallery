@@ -45,3 +45,5 @@ spec:
             name: view-generator-serv-srv
             port:
               number: 3000
+
+

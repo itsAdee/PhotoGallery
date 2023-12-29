@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: storage-mgmt-serv
-          image: nightwalker7558/str-mgt
+          image: wasifmehmood/str-mgt
 ---
 apiVersion: v1
 kind: Service

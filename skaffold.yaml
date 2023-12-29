@@ -10,7 +10,7 @@ build:
   local:
     push: false
   artifacts:
-    - image: nightwalker7558/event-bus
+    - image: wasifmehmood/event-bus
       context: EventBus
       docker:
         dockerfile: Dockerfile
@@ -18,7 +18,7 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
-    - image: nightwalker7558/str-mgt
+    - image: wasifmehmood/str-mgt
       context: StorageMgmtServ
       docker:
         dockerfile: Dockerfile
@@ -26,7 +26,7 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
-    - image: nightwalker7558/usage-mnt
+    - image: wasifmehmood/usage-mnt
       context: UsageMntrServ
       docker:
         dockerfile: Dockerfile
@@ -34,7 +34,7 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
-    - image: nightwalker7558/user-acc
+    - image: wasifmehmood/user-acc
       context: UserAccMgmtServ
       docker:
         dockerfile: Dockerfile
@@ -42,7 +42,7 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
-    - image: nightwalker7558/view-gen
+    - image: wasifmehmood/view-gen
       context: view_generator_serv
       docker:
         dockerfile: Dockerfile

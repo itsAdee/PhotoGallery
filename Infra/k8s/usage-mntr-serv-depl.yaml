@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: usage-mntr-serv
-          image: nightwalker7558/usage-mnt
+          image: wasifmehmood/usage-mnt
 ---
 apiVersion: v1
 kind: Service
