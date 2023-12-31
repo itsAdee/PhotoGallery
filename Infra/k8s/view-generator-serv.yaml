@@ -14,11 +14,7 @@ spec:
     spec:
       containers:
         - name: view-generator-serv
-<<<<<<< Updated upstream
-          image: us.gcr.io/photogalleryapp-408816/view-gen
-=======
           image: us.gcr.io/photogallery-409112/view_generator_serv
->>>>>>> Stashed changes
 ---
 apiVersion: v1
 kind: Service

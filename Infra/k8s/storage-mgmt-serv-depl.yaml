@@ -14,11 +14,7 @@ spec:
     spec:
       containers:
         - name: storage-mgmt-serv
-<<<<<<< Updated upstream
-          image: us.gcr.io/photogalleryapp-408816/str-mgt
-=======
           image: us.gcr.io/photogallery-409112/storagemgmtserv
->>>>>>> Stashed changes
 ---
 apiVersion: v1
 kind: Service
