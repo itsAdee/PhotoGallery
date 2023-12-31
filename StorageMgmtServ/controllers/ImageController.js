@@ -236,7 +236,7 @@ const renameImage = async (req, res) => {
             return res.status(404).json({ message: "Image not found." });
         }
 
-        await Image.updateOne({ imageName });
+        await Image.findOneAndUpdate({ _id: id }, { imageName });
 
         res.status(200).json({ message: "Image renamed." });
     } catch (error) {

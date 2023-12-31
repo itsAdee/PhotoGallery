@@ -7,10 +7,16 @@ deploy:
 metadata:
   name: photogallery
 build:
-  local:
-    push: false
+  # local:
+  #   push: false
+  googleCloudBuild:
+    projectId: photogallery-409112
   artifacts:
+<<<<<<< Updated upstream
     - image: gcr.io/photogalleryapp-408816/event-bus
+=======
+    - image: us.gcr.io/photogallery-409112/eventbus
+>>>>>>> Stashed changes
       context: EventBus
       docker:
         dockerfile: Dockerfile
@@ -18,7 +24,11 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
+<<<<<<< Updated upstream
     - image: gcr.io/photogalleryapp-408816/str-mgt
+=======
+    - image: us.gcr.io/photogallery-409112/storagemgmtserv
+>>>>>>> Stashed changes
       context: StorageMgmtServ
       docker:
         dockerfile: Dockerfile
@@ -26,7 +36,11 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
+<<<<<<< Updated upstream
     - image: gcr.io/photogalleryapp-408816/usage-mnt
+=======
+    - image: us.gcr.io/photogallery-409112/usagemntrserv
+>>>>>>> Stashed changes
       context: UsageMntrServ
       docker:
         dockerfile: Dockerfile
@@ -34,7 +48,11 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
+<<<<<<< Updated upstream
     - image: gcr.io/photogalleryapp-408816/user-acc
+=======
+    - image: us.gcr.io/photogallery-409112/useraccmgmtserv
+>>>>>>> Stashed changes
       context: UserAccMgmtServ
       docker:
         dockerfile: Dockerfile
@@ -42,7 +60,11 @@ build:
         manual:
           - src: "src/**/*.js"
             dest: .
+<<<<<<< Updated upstream
     - image: gcr.io/photogalleryapp-408816/view-gen
+=======
+    - image: us.gcr.io/photogallery-409112/view_generator_serv
+>>>>>>> Stashed changes
       context: view_generator_serv
       docker:
         dockerfile: Dockerfile

@@ -51,7 +51,11 @@ const Dashboard = (props) => {
       formData.append('userID', user._id);
 
       try {
+<<<<<<< Updated upstream
         const response = await axios.post('http://photogalleryd.com/api/storageMgmt/images/upload', formData);
+=======
+        const response = await axios.post('http://photogallery.com/api/storageMgmt/images/upload', formData);
+>>>>>>> Stashed changes
         console.log(response.data);
 
         if (response.status === 200) {

@@ -14,7 +14,11 @@ spec:
     spec:
       containers:
         - name: usage-mntr-serv
+<<<<<<< Updated upstream
           image: us.gcr.io/photogalleryapp-408816/usage-mnt
+=======
+          image: us.gcr.io/photogallery-409112/usagemntrserv
+>>>>>>> Stashed changes
 ---
 apiVersion: v1
 kind: Service

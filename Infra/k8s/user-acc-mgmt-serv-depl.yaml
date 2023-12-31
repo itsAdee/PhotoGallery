@@ -14,7 +14,11 @@ spec:
     spec:
       containers:
         - name: user-acc-mgmt-serv
+<<<<<<< Updated upstream
           image: us.gcr.io/photogalleryapp-408816/user-acc
+=======
+          image: us.gcr.io/photogallery-409112/useraccmgmtserv
+>>>>>>> Stashed changes
 ---
 apiVersion: v1
 kind: Service
