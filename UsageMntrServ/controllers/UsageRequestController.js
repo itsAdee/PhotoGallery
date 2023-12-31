@@ -22,7 +22,7 @@ const addUsageRequest = async (req, res) => {
 
 const getUsageRequestsToday = async (req, res) => {
     try {
-        const userId = req.params.userID;
+        const userID = req.params.userID;
 
         // Get today's date at 00:00:00
         const startOfToday = new Date();
@@ -34,7 +34,7 @@ const getUsageRequestsToday = async (req, res) => {
 
         // Find usage requests that were created between the start of today and the end of today
         const usageRequests = await UsageRequest.find({
-            userID: userId,
+            userID,
             createdAt: {
                 $gte: startOfToday,
                 $lt: endOfToday
