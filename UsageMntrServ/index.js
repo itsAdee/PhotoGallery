@@ -21,7 +21,7 @@ app.use('/api/usageMntr', usageRouter);
 // Reset daily limit at midnight
 cron.schedule('0 0 * * *', async () => {
   console.log("UsageMntrServ: Resetting daily limit...");
-  await axios.post("http://localhost:4002/api/usageMntr/resetDailyLimit").catch((err) => {
+  await axios.post("http://usage-mntr-serv-srv:4002/api/usageMntr/resetDailyLimit").catch((err) => {
     console.log(err.message);
   });
 });

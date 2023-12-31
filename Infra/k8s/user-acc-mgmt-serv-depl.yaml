@@ -14,16 +14,17 @@ spec:
     spec:
       containers:
         - name: user-acc-mgmt-serv
-          image: adeelqureshi/user-acc-mgmt-serv
+          image: us.gcr.io/photogallery-409112/useraccmgmtserv
 ---
 apiVersion: v1
 kind: Service
-metadata: name:user-acc-mgmt-serv-srv
+metadata: 
+  name: user-acc-mgmt-serv-srv
 spec:
   selector:
     app: user-acc-mgmt-serv
   ports:
     - name: user-acc-mgmt-serv
       protocol: TCP
-      port: 4001
-      targetPort: 4001
+      port: 4003
+      targetPort: 4003

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: storage-mgmt-serv
-          image: adeelqureshi/storage-mgmt-serv
+          image: us.gcr.io/photogallery-409112/storagemgmtserv
 ---
 apiVersion: v1
 kind: Service
@@ -26,5 +26,5 @@ spec:
   ports:
     - name: storage-mgmt-serv
       protocol: TCP
-      port: 4002
-      targetPort: 4002
+      port: 4001
+      targetPort: 4001

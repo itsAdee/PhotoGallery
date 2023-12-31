@@ -21,7 +21,7 @@ const uploadImage = async (req, res) => {
     const storage = await axios.request({
         method: 'get',
         maxBodyLength: Infinity,
-        url: 'http://localhost:4001/api/storageMgmt/storage/' + userID,
+        url: 'http://storage-mgmt-serv-srv:4001/api/storageMgmt/storage/' + userID,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -36,7 +36,7 @@ const uploadImage = async (req, res) => {
     const usage = await axios.request({
         method: 'get',
         maxBodyLength: Infinity,
-        url: 'http://localhost:4002/api/usageMntr/usage/user/' + userID,
+        url: 'http://usage-mntr-serv-srv:4002/api/usageMntr/usage/user/' + userID,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -89,7 +89,7 @@ const uploadImage = async (req, res) => {
                         await axios.request({
                             method: 'post',
                             maxBodyLength: Infinity,
-                            url: 'http://localhost:4000/api/eventbus/events',
+                            url: 'http://event-bus-srv:4000/api/eventbus/events',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
@@ -130,7 +130,7 @@ const downloadImage = async (req, res) => {
         const usage = await axios.request({
             method: 'get',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4002/api/usageMntr/usage/user/' + userID,
+            url: 'http://usage-mntr-serv-srv:4002/api/usageMntr/usage/user/' + userID,
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -205,7 +205,7 @@ const deleteImage = async (req, res) => {
         await axios.request({
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4000/api/eventbus/events',
+            url: 'http://event-bus-srv:4000/api/eventbus/events',
             headers: {
                 'Content-Type': 'application/json'
             },

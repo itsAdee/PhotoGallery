@@ -13,7 +13,7 @@ eventRouter.post("/", async (req, res) => {
         await axios.request({
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4001/api/storageMgmt/storage/createUserStorage',
+            url: 'http://storage-mgmt-serv-srv:4001/api/storageMgmt/storage/createUserStorage',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -29,7 +29,7 @@ eventRouter.post("/", async (req, res) => {
         await axios.request({
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4001/api/storageMgmt/storage/updateUserStorageOnDeletion',
+            url: 'http://storage-mgmt-serv-srv:4001/api/storageMgmt/storage/updateUserStorageOnDeletion',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -44,7 +44,7 @@ eventRouter.post("/", async (req, res) => {
         await axios.request({
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://localhost:4001/api/storageMgmt/storage/updateUserStorageOnUpload',
+            url: 'http://storage-mgmt-serv-srv:4001/api/storageMgmt/storage/updateUserStorageOnUpload',
             headers: {
                 'Content-Type': 'application/json'
             },

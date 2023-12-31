@@ -1,0 +1,65 @@
+apiVersion: skaffold/v4beta8
+kind: Config
+deploy:
+  kubectl:
+    remoteManifests:
+      - ./infra/k8s/*
+metadata:
+  name: photogallery
+build:
+  # local:
+  #   push: false
+  googleCloudBuild:
+    projectId: photogallery-409112
+  artifacts:
+    - image: us.gcr.io/photogallery-409112/eventbus
+      context: EventBus
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.js"
+            dest: .
+    - image: us.gcr.io/photogallery-409112/storagemgmtserv
+      context: StorageMgmtServ
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.js"
+            dest: .
+    - image: us.gcr.io/photogallery-409112/usagemntrserv
+      context: UsageMntrServ
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.js"
+            dest: .
+    - image: us.gcr.io/photogallery-409112/useraccmgmtserv
+      context: UserAccMgmtServ
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.js"
+            dest: .
+    - image: us.gcr.io/photogallery-409112/view_generator_serv
+      context: view_generator_serv
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.js"
+            dest: .
+manifests:
+  rawYaml:
+    - Infra/k8s/event-bus-depl.yaml
+    - Infra/k8s/ingress-serv.yaml
+    - Infra/k8s/storage-mgmt-serv-depl.yaml
+    - Infra/k8s/storage-mgmt-serv-nodeport.yaml
+    - Infra/k8s/usage-mntr-serv-depl.yaml
+    - Infra/k8s/usage-mntr-serv-nodeport.yaml
+    - Infra/k8s/user-acc-mgmt-serv-depl.yaml
+    - Infra/k8s/user-acc-mgmt-serv-nodeport.yaml
+    - Infra/k8s/view-generator-serv.yaml

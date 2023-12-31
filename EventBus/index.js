@@ -19,7 +19,7 @@ app.post("/api/eventbus/events", async (req, res) => {
     await axios.request({
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:4001/api/storageMgmt/events',
+      url: 'http://storage-mgmt-serv-srv:4001/api/storageMgmt/events',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -33,7 +33,7 @@ app.post("/api/eventbus/events", async (req, res) => {
     await axios.request({
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:4002/api/usageMntr/events',
+      url: 'http://usage-mntr-serv-srv:4002/api/usageMntr/events',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -47,7 +47,7 @@ app.post("/api/eventbus/events", async (req, res) => {
     await axios.request({
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:4003/api/userAcc/events',
+      url: 'http://user-acc-mgmt-serv-srv:4003/api/userAcc/events',
       headers: {
         'Content-Type': 'application/json'
       },
