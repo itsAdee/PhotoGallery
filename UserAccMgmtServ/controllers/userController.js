@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const axios = require('axios');
-
+const {generateToken} = require('./WebToken');
 const CreateUser = async (req, res) => {
   const { username, password, confirmPassword, email } = req.body;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -34,6 +34,8 @@ const CreateUser = async (req, res) => {
     const newUser = new User({ username, password: hashedPassword, email });
     await newUser.save();
     console.log(`User ${username} created.`);
+    generatedToken = generateToken(newUser);
+    console.log(generatedToken);
 
     // Send event to EventBus
     await axios.request({
