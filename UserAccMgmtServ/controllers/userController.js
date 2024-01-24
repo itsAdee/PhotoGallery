@@ -56,8 +56,11 @@ const CreateUser = async (req, res) => {
     });
 
     newUser.password = undefined;
+    response = {
+      token: generatedToken,
+    }
 
-    res.status(201).json(newUser);
+    res.status(201).json(response);
   } catch (error) {
     console.log(error.message);
     res.status(500).send({ message: error.message });
@@ -91,9 +94,14 @@ const LoginUser = async (req, res) => {
 
   console.log(`User ${username} logged in.`);
 
+  webtoken = generateToken(user);
+
   user.password = undefined;
   console.log(user);
-  res.status(200).json(user);
+  response = {
+    token: webtoken,
+  }
+  res.status(200).json(response);
 };
 
 module.exports = {
