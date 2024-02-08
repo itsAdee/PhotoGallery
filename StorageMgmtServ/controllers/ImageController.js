@@ -161,7 +161,8 @@ const downloadImage = async (req, res) => {
 }
 
 const getImages = async (req, res) => {
-    const { userID,user } = req.params;
+    const { userID } = req.params;
+    user = req.user;
     console.log("User : ",user);
     try {
         const images = await Image.find({ userID });
