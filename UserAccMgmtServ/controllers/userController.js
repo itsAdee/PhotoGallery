@@ -58,6 +58,7 @@ const CreateUser = async (req, res) => {
     newUser.password = undefined;
     response = {
       token: generatedToken,
+      username: newUser.username,
     }
 
     res.status(201).json(response);
@@ -100,6 +101,7 @@ const LoginUser = async (req, res) => {
   console.log(user);
   response = {
     token: webtoken,
+    username: user.username,
   }
   res.status(200).json(response);
 };

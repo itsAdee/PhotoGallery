@@ -37,6 +37,8 @@ const getUserStorageById = async (req, res) => {
             return res.status(404).json({ message: "User not found." });
         }
 
+        console.log("user storage is:",userStorage);
+
         res.status(200).json(userStorage);
     } catch (error) {
         console.error(error);

@@ -47,7 +47,7 @@ function Sidebar(props) {
           <Avatar size="lg" name={user.username} src="/path/to/user/avatar.png" />
           <VStack align="start">
             <Text fontSize="lg">{user.username}</Text>
-            <Text fontSize="sm">{user.email}</Text>
+            
           </VStack>
         </HStack>
         <VStack align="start" spacing="3" w="100%">

@@ -4,8 +4,8 @@ const axios = require("axios");
 
 eventRouter.post("/", async (req, res) => {
     const { type } = req.body;
-
     console.log("StorageMgmtServ: Received Event:", type);
+
 
     if (type === "NewUserCreated") {
         console.log("StorageMgmtServ: Creating user...")

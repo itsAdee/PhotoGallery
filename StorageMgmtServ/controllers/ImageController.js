@@ -7,6 +7,7 @@ const upload = multer({ limits: { fileSize: 1000000 }, dest: '/uploads/' }).sing
 const uploadImage = async (req, res) => {
     console.log("Upload Image Successfully Called")
     const userID = req.user.id;
+    console.log("User ID: " + userID);
     
     const file = req.files.file;
 
