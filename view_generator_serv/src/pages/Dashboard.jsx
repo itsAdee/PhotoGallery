@@ -29,7 +29,7 @@ const Dashboard = (props) => {
     // Fetch images from the server
     async function fetchImages() {
       try {
-        const response = await axios.get(`http://localhost:4001/api/storageMgmt/images/user/658b0b35fabcae33a6abdd14`,
+        const response = await axios.get(`http://localhost:4001/api/storageMgmt/images`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -54,10 +54,16 @@ const Dashboard = (props) => {
     if (selectedFile && user) {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      formData.append('userID', user._id);
+      // formData.append('userID', user._id);
 
       try {
-        const response = await axios.post('http://localhost:4001/api/storageMgmt/images/upload', formData);
+        const response = await axios.post('http://localhost:4001/api/storageMgmt/images/upload', formData
+          , {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          });
         console.log(response.data);
 
         if (response.status === 200) {
@@ -73,7 +79,11 @@ const Dashboard = (props) => {
 
   const handleDelete = async (imageId) => {
     try {
-      const response = await axios.delete(`http://localhost:4001/api/storageMgmt/images/${imageId}/user/${user._id}`);
+      const response = await axios.delete(`http://localhost:4001/api/storageMgmt/images/${imageId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },});
 
       if (response.status === 200) {
         console.log(response.data);
@@ -90,9 +100,12 @@ const Dashboard = (props) => {
     try {
       const response = axios.request({
         method: 'put',
-        url: `http://localhost:4001/api/storageMgmt/images/rename/${imageId}/user/${user._id}`,
+        url: `http://localhost:4001/api/storageMgmt/images/rename/${imageId}`,
         data: {
           imageName: newName,
+        }
+        , headers: {
+          Authorization: `Bearer ${user.token}`,
         }
       });
 
@@ -115,9 +128,13 @@ const Dashboard = (props) => {
 
   const handleDownload = async (imageId) => {
     try {
-      const response = await axios.get(`http://localhost:4001/api/storageMgmt/images/download/${imageId}/user/${user._id}`, {
+      const response = await axios.get(`http://localhost:4001/api/storageMgmt/images/download/${imageId}`, {
         responseType: 'blob',
-      });
+      }
+        , {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          }});
 
       const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
       const link = document.createElement('a');

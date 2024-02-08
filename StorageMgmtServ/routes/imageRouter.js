@@ -12,10 +12,11 @@ const verifyToken = require("../controllers/JwtVerification");
 
 imageRouter.use(fileUpload());
 
-imageRouter.get("/download/:id/user/:userID",verifyToken,downloadImage)
+imageRouter.get("/download/:id",verifyToken,downloadImage)
 imageRouter.post("/upload",verifyToken ,uploadImage);
-imageRouter.get("/user/:userID", verifyToken,getImages);
-imageRouter.put("/rename/:id/user/:userID",verifyToken, renameImage);
-imageRouter.delete("/:id/user/:userID", verifyToken,deleteImage);
+
+imageRouter.put("/rename/:id",verifyToken, renameImage);
+imageRouter.delete("/:id", verifyToken,deleteImage);
+imageRouter.get("/", verifyToken,getImages);
 
 module.exports = { imageRouter };
