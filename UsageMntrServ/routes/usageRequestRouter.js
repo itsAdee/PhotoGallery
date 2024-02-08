@@ -9,11 +9,12 @@ const {
     getUsageRequestsByMonth,
     getUsageRequestsByYear
 } = require("../controllers/UsageRequestController");
+const verifyToken = require('../controllers/JwtVerification');
 
-usageRequestRouter.get("/user/:userID/", getDailyUsageById);
-usageRequestRouter.get("/user/:userID/today", getUsageRequestsToday);
-usageRequestRouter.get("/user/:userID/day", getUsageRequestsByDay);
-usageRequestRouter.get("/user/:userID/month", getUsageRequestsByMonth);
-usageRequestRouter.get("/user/:userID/year", getUsageRequestsByYear);
+usageRequestRouter.get("/user/:userID/",verifyToken,getDailyUsageById);
+usageRequestRouter.get("/user/:userID/today",verifyToken ,getUsageRequestsToday);
+usageRequestRouter.get("/user/:userID/day",verifyToken ,getUsageRequestsByDay);
+usageRequestRouter.get("/user/:userID/month",verifyToken ,getUsageRequestsByMonth);
+usageRequestRouter.get("/user/:userID/year",verifyToken,getUsageRequestsByYear);
 
 module.exports = { usageRequestRouter };

@@ -6,10 +6,11 @@ const {
     createUserStorage,
     updateUserStorageOnDeletion
 } = require("../controllers/UserStorageController");
+const verifyToken = require("../controllers/JwtVerification");
 
 storageRouter.post("/updateUserStorageOnUpload", updateUserStorageOnUpload);
 storageRouter.post("/createUserStorage", createUserStorage);
 storageRouter.post("/updateUserStorageOnDeletion", updateUserStorageOnDeletion);
-storageRouter.get("/:userID", getUserStorageById);
+storageRouter.get("/",verifyToken,getUserStorageById);
 
 module.exports = { storageRouter };

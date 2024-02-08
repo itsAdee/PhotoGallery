@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 const addUsageRequest = async (req, res) => {
     const { userID, bandwidth, requestType } = req.body;
+    console.log("User ID: ", userID);
 
     try {
         const newUsageRequest = new UsageRequest({
@@ -23,6 +24,7 @@ const addUsageRequest = async (req, res) => {
 const getUsageRequestsToday = async (req, res) => {
     try {
         const userID = req.params.userID;
+        console.log("User ID: ", userID);
 
         // Get today's date at 00:00:00
         const startOfToday = new Date();
@@ -48,6 +50,7 @@ const getUsageRequestsToday = async (req, res) => {
 };
 
 const getUsageRequestsByDay = async (req, res) => {
+    console.log("User ID: ", req.params.userID);
     const userID = new mongoose.Types.ObjectId(req.params.userID);
 
     try {
@@ -84,6 +87,7 @@ const getUsageRequestsByDay = async (req, res) => {
 }
 
 const getUsageRequestsByMonth = async (req, res) => {
+    console.log("User ID: ", req.params.userID);
     const userID = new mongoose.Types.ObjectId(req.params.userID);
 
     try {
@@ -118,6 +122,7 @@ const getUsageRequestsByMonth = async (req, res) => {
 }
 
 const getUsageRequestsByYear = async (req, res) => {
+    console.log("User ID: ", req.params.userID);
     const userID = new mongoose.Types.ObjectId(req.params.userID);
 
     try {

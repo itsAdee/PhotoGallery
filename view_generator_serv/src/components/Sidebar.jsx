@@ -17,7 +17,12 @@ function Sidebar(props) {
   useEffect(() => {
     const getStorageUsed = async () => {
       try {
-        const response = await axios.get(`http://localhost:4001/api/storageMgmt/storage/${user._id}`);
+        const response = await axios.get(`http://localhost:4001/api/storageMgmt/storage/`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          });
         const data = await response.data;
         setStorageUsed(data.usedStorage);
         setTotalStorage(data.totalStorage);

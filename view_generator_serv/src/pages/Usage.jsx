@@ -30,7 +30,12 @@ const Usage = () => {
     else if (filterOption === "yearly") { type = "year"; }
 
     try {
-      const response = await axios.get(`http://localhost:4002/api/usageMntr/usage/user/${user._id}/${type}`);
+      const response = await axios.get(`http://localhost:4002/api/usageMntr/usage/user/123/${type}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+          });
       console.log(response.data);
       setUsageData(response.data);
     } catch (error) {
@@ -100,7 +105,7 @@ const Usage = () => {
     setDisabled(true);
 
     try {
-      const response = await axios.get(`http://localhost:4002/api/usageMntr/usage/user/${user._id}/today`);
+      const response = await axios.get(`http://localhost:4002/api/usageMntr/usage/user/123/today`);
       setRequestUsageData(response.data);
     } catch (error) {
       console.error(error);
