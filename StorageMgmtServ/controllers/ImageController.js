@@ -6,8 +6,8 @@ const upload = multer({ limits: { fileSize: 1000000 }, dest: '/uploads/' }).sing
 
 const uploadImage = async (req, res) => {
     console.log("Upload Image Successfully Called")
-    const { userID,user } = req.body;
-    console.log("User : ",user);
+    const userID = req.user.id;
+    
     const file = req.files.file;
 
     if (!file) {
@@ -120,7 +120,8 @@ const uploadImage = async (req, res) => {
 }
 
 const downloadImage = async (req, res) => {
-    const { id, userID } = req.params;
+    const { id } = req.params;
+    const userID = req.user.id;
 
     try {
         const image = await Image.findById(id);
@@ -161,11 +162,11 @@ const downloadImage = async (req, res) => {
 }
 
 const getImages = async (req, res) => {
-    const { userID } = req.params;
-    user = req.user;
-    console.log("User : ",user);
+    
+    const userID = req.user.id;
+   
     try {
-        const images = await Image.find({ userID });
+        const images = await Image.find({ userID});
 
         if (!images) {
             return res.status(404).json({ message: `Images not found.` });
@@ -195,7 +196,8 @@ const getImages = async (req, res) => {
 }
 
 const deleteImage = async (req, res) => {
-    const { id, userID } = req.params;
+    const { id } = req.params;
+    const userID = req.user.id;
     try {
         const image = await Image.findOne({ _id: id, userID });
         console.log(image);
@@ -231,7 +233,8 @@ const deleteImage = async (req, res) => {
 }
 
 const renameImage = async (req, res) => {
-    const { id, userID } = req.params;
+    const { id } = req.params;
+    const userID = req.user.id;
     const { imageName } = req.body;
     try {
         const image = await Image.find({ _id: id, userID });
