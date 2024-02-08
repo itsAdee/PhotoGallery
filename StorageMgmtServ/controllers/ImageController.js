@@ -6,7 +6,8 @@ const upload = multer({ limits: { fileSize: 1000000 }, dest: '/uploads/' }).sing
 
 const uploadImage = async (req, res) => {
     console.log("Upload Image Successfully Called")
-    const { userID } = req.body;
+    const { userID,user } = req.body;
+    console.log("User : ",user);
     const file = req.files.file;
 
     if (!file) {
@@ -120,6 +121,7 @@ const uploadImage = async (req, res) => {
 
 const downloadImage = async (req, res) => {
     const { id, userID } = req.params;
+
     try {
         const image = await Image.findById(id);
 
@@ -159,7 +161,8 @@ const downloadImage = async (req, res) => {
 }
 
 const getImages = async (req, res) => {
-    const { userID } = req.params;
+    const { userID,user } = req.params;
+    console.log("User : ",user);
     try {
         const images = await Image.find({ userID });
 

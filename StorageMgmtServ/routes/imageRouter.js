@@ -8,10 +8,11 @@ const {
     downloadImage
 } = require("../controllers/ImageController");
 const fileUpload = require("express-fileupload");
+const { verifyToken } = require('../controllers/JwtVerification');
 
 imageRouter.use(fileUpload());
 
-imageRouter.get("/download/:id/user/:userID", downloadImage)
+imageRouter.get("/download/:id/user/:userID",verifyToken,downloadImage)
 imageRouter.post("/upload", uploadImage);
 imageRouter.get("/user/:userID", getImages);
 imageRouter.put("/rename/:id/user/:userID", renameImage);

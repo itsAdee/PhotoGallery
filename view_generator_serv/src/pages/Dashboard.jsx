@@ -29,7 +29,13 @@ const Dashboard = (props) => {
     // Fetch images from the server
     async function fetchImages() {
       try {
-        const response = await axios.get(`http://localhost:4001/api/storageMgmt/images/user/${user._id}`);
+        const response = await axios.get(`http://localhost:4001/api/storageMgmt/images/user/658b0b35fabcae33a6abdd14`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
         setImages(response.data);
       } catch (error) {
         console.error(error);
